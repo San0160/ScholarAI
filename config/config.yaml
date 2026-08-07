@@ -1,0 +1,13 @@
+artifacts_root: artifacts
+
+data:
+  raw_data_path: data/raw
+  processed_data_path: data/processed
+  vector_db_path: data/vector_db
+
+server:
+  host: 0.0.0.0
+  port: 8000
+
+logging:
+  level: INFO
