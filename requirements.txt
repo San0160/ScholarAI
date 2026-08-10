@@ -16,4 +16,7 @@ faiss-cpu==1.11.0
 
 sentence-transformers==4.1.0
 
+transformers
+torch
+
 -e .
