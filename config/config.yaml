@@ -29,3 +29,7 @@ vector_store:
 retrieval:
   top_k: 5
   similarity_threshold: 0.70
+
+llm:
+  provider: huggingface
+  model: Qwen/Qwen2.5-1.5B-Instruct
