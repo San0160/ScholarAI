@@ -5,6 +5,7 @@ from pathlib import Path
 
 from ai_research_assistant.entity.document import Document
 from ai_research_assistant.vector_store.base_vector import BaseVectorStore
+from ai_research_assistant.entity.retrieval_result import RetrievalResult
 
 
 class FAISSVectorStore(BaseVectorStore):
@@ -59,17 +60,19 @@ class FAISSVectorStore(BaseVectorStore):
 
         results = []
 
-        for index in indices[0]:
+        for score, index in zip(scores[0], indices[0]):
 
             if index == -1:
                 continue
 
             results.append(
-                self.documents[index]
+                RetrievalResult(
+                    document=self.documents[index],
+                    score=float(score)
+                )
             )
 
         return results
-
     def save(self):
 
         index_path = self.storage_path / "scholarai.index"

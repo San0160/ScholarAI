@@ -25,3 +25,7 @@ vector_store:
   path: data/vector_db
   index_name: scholarai.index
   documents_name: documents.pkl
+
+retrieval:
+  top_k: 5
+  similarity_threshold: 0.70
