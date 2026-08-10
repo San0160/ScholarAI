@@ -15,6 +15,8 @@ class IndexingPipeline:
         config = ConfigurationManager().config
 
         self.loader = DocumentLoader()
+
+        self.cleaner = TextCleaner()
         
         self.chunker = RecursiveChunker(
             chunk_size=config.chunking.chunk_size,

@@ -4,7 +4,6 @@ import logging
 from pathlib import Path
 
 from ai_research_assistant.constants import LOG_DIR
-from ai_research_assistant.config.configuration import ConfigurationManager
 
 # --------------------------------------------------------
 # Load configuration

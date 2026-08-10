@@ -27,9 +27,13 @@ vector_store:
   documents_name: documents.pkl
 
 retrieval:
-  top_k: 5
-  similarity_threshold: 0.70
+  candidate_k: 10
 
 llm:
   provider: huggingface
-  model: Qwen/Qwen2.5-1.5B-Instruct
+  model: Qwen/Qwen2.5-0.5B-Instruct
+
+reranking:
+  provider: cross_encoder
+  model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  top_k: 3
