@@ -12,6 +12,8 @@ ensure==1.0.2
 pymupdf==1.26.3
 python-docx==1.2.0
 
+faiss-cpu==1.11.0
+
 sentence-transformers==4.1.0
 
 -e .
