@@ -1,6 +1,6 @@
 from pathlib import Path
 from ai_research_assistant.ingestion.txt_loader import TxtLoader
-from ai_research_assistant.ingestion.pdf_loader import PDFLoader
+from ai_research_assistant.ingestion.pdf_loader import PdfLoader
 from ai_research_assistant.ingestion.docx_loader import DocxLoader
 from ai_research_assistant.ingestion.markdown_loader import MarkdownLoader
 
@@ -10,7 +10,7 @@ class DocumentLoader:
 
         self.loaders = {
             ".txt": TxtLoader(),
-            ".pdf": PDFLoader(),
+            ".pdf": PdfLoader(),
             ".docx": DocxLoader(),
             ".md": MarkdownLoader(),
         }

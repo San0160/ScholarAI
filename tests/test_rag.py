@@ -13,7 +13,11 @@ result = indexing_pipeline.run(
 )
 
 print("Indexing complete:", result)
-print("Vectors in FAISS:", indexing_pipeline.vector_store.index.ntotal)
+
+print(
+    "Vectors in FAISS:",
+    indexing_pipeline.vector_store.index.ntotal
+)
 
 
 # -------------------------
@@ -22,17 +26,9 @@ print("Vectors in FAISS:", indexing_pipeline.vector_store.index.ntotal)
 
 query_pipeline = QueryPipeline()
 
-query = "What is the main contribution of this paper?"
-
-results = query_pipeline.retrieval_pipeline.run(query)
-
-print("\nRetrieved results:", len(results))
-
-for result in results:
-    print("\nScore:", result.score)
-    print("Content:", result.document.page_content[:500])
-
-answer = query_pipeline.run(query)
+answer = query_pipeline.run(
+    "What is the main contribution of this paper?"
+)
 
 print("\nAnswer:")
 print(answer)

@@ -31,7 +31,7 @@ retrieval:
 
 llm:
   provider: huggingface
-  model: Qwen/Qwen2.5-0.5B-Instruct
+  model: Qwen/Qwen2.5-3B-Instruct
 
 reranking:
   provider: cross_encoder
