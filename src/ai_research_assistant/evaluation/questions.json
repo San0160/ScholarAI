@@ -1,0 +1,78 @@
+[
+    {
+        "document": "GAN_case_study.pdf",
+        "question": "What is the main objective of the assignment?",
+        "expected_chunks": [
+            "GAN_case_study.pdf_0"
+        ]
+    },
+    {
+        "document": "GAN_case_study.pdf",
+        "question": "What are the three real-world domains addressed using GANs?",
+        "expected_chunks": [
+            "GAN_case_study.pdf_1"
+        ]
+    },
+    {
+        "document": "GAN_case_study.pdf",
+        "question": "What changes were made to improve the GAN training process?",
+        "expected_chunks": [
+            "GAN_case_study.pdf_5"
+        ]
+    },
+    {
+        "document": "GAN_case_study.pdf",
+        "question": "Which activation function was used instead of ReLU?",
+        "expected_chunks": [
+            "GAN_case_study.pdf_5"
+        ]
+    },
+    {
+        "document": "GAN_case_study.pdf",
+        "question": "What happened when the model was trained on the 2-D spiral data?",
+        "expected_chunks": [
+            "GAN_case_study.pdf_3"
+        ]
+    },
+    {
+        "document": "GAN_case_study.pdf",
+        "question": "What problem was observed in the generated blood cell images?",
+        "expected_chunks": [
+            "GAN_case_study.pdf_9"
+        ]
+    },
+    {
+        "document": "GAN_case_study.pdf",
+        "question": "What was the FID score reported for the blood cell generation?",
+        "expected_chunks": [
+            "GAN_case_study.pdf_10"
+        ]
+    },
+    {
+        "document": "GAN_case_study.pdf",
+        "question": "What was observed during the pizza sketch generation task?",
+        "expected_chunks": [
+            "GAN_case_study.pdf_14",
+            "GAN_case_study.pdf_15",
+            "GAN_case_study.pdf_16",
+            "GAN_case_study.pdf_17"
+        ]
+    },
+    {
+        "document": "GAN_case_study.pdf",
+        "question": "What improvement was suggested for the GAN discriminator?",
+        "expected_chunks": [
+            "GAN_case_study.pdf_8",
+            "GAN_case_study.pdf_10",
+            "GAN_case_study.pdf_14",
+            "GAN_case_study.pdf_20"
+        ]
+    },
+    {
+        "document": "GAN_case_study.pdf",
+        "question": "What GAN paper is cited in the references?",
+        "expected_chunks": [
+            "GAN_case_study.pdf_21"
+        ]
+    }
+]

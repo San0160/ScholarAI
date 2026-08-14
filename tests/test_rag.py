@@ -9,7 +9,7 @@ from ai_research_assistant.pipeline.query_pipeline import QueryPipeline
 indexing_pipeline = IndexingPipeline()
 
 result = indexing_pipeline.run(
-    "data/documents/GAN_case_study.pdf"
+    "data/documents/attention.pdf"
 )
 
 print("Indexing complete:", result)
@@ -23,7 +23,7 @@ print(
 # -------------------------
 # Ask question
 # -------------------------
-
+'''
 query_pipeline = QueryPipeline()
 
 answer = query_pipeline.run(
@@ -32,3 +32,4 @@ answer = query_pipeline.run(
 
 print("\nAnswer:")
 print(answer)
+'''

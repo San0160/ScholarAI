@@ -8,18 +8,4 @@ class MetadataFilter:
         results: list[RetrievalResult]
     ) -> list[RetrievalResult]:
 
-        filtered_results = []
-
-        for result in results:
-
-            section = result.document.metadata.get(
-                "section",
-                ""
-            ).lower()
-
-            if section == "references":
-                continue
-
-            filtered_results.append(result)
-
-        return filtered_results
+        return results
