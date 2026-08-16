@@ -35,5 +35,5 @@ llm:
 
 reranking:
   provider: cross_encoder
-  model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  model: BAAI/bge-reranker-v2-m3
   top_k: 3

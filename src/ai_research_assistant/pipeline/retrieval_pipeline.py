@@ -28,22 +28,22 @@ class RetrievalPipeline:
 
         self.metadata_filter = MetadataFilter()
 
-        self.reranker = CrossEncoderReranker(
-            model_name=config.reranking.model
-        )
+        # Reranker disabled for FAISS baseline
+        # self.reranker = CrossEncoderReranker(
+        #     model_name=config.reranking.model
+        # )
 
         self.final_top_k = config.reranking.top_k
 
     def run(self, query: str):
 
-        candidates = self.retriever.retrieve(query)
+        candidates = self.retriever.retrieve(
+            query
+        )
 
         candidates = self.metadata_filter.filter(
             candidates
         )
 
-        return self.reranker.rerank(
-            query=query,
-            results=candidates,
-            top_k=self.final_top_k
-        )
+        # Reranker disabled
+        return candidates[:self.final_top_k]
