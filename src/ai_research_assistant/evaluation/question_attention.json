@@ -1,116 +1,132 @@
 [
-    {
-        "question": "What is the main architecture proposed in the paper?",
-        "expected_chunks": [
-            "attention.pdf_19"
-        ]
-    },
-    {
-        "question": "Why do the authors propose using self-attention instead of recurrent or convolutional layers?",
-        "expected_chunks": [
-            "attention.pdf_46",
-            "attention.pdf_50",
-            "attention.pdf_53"
-        ]
-    },
-    {
-        "question": "What are the two main components of the Transformer architecture?",
-        "expected_chunks": [
-            "attention.pdf_17",
-            "attention.pdf_19"
-        ]
-    },
-    {
-        "question": "How many encoder and decoder layers are used in the base Transformer model?",
-        "expected_chunks": [
-            "attention.pdf_19",
-            "attention.pdf_20"
-        ]
-    },
-    {
-        "question": "What is the dimensionality of the model embeddings in the base Transformer?",
-        "expected_chunks": [
-            "attention.pdf_38",
-            "attention.pdf_39"
-        ]
-    },
-    {
-        "question": "What is scaled dot-product attention?",
-        "expected_chunks": [
-            "attention.pdf_24",
-            "attention.pdf_25",
-            "attention.pdf_26"
-        ]
-    },
-    {
-        "question": "Why is the dot product scaled by the square root of the key dimension?",
-        "expected_chunks": [
-            "attention.pdf_28",
-            "attention.pdf_29",
-            "attention.pdf_30"
-        ]
-    },
-    {
-        "question": "What is multi-head attention and why is it used in the Transformer?",
-        "expected_chunks": [
-            "attention.pdf_29",
-            "attention.pdf_31",
-            "attention.pdf_33"
-        ]
-    },
-    {
-        "question": "How does the Transformer incorporate information about the position of tokens in a sequence?",
-        "expected_chunks": [
-            "attention.pdf_42",
-            "attention.pdf_43"
-        ]
-    },
-    {
-        "question": "What optimization algorithm and learning-rate schedule were used to train the Transformer?",
-        "expected_chunks": [
-            "attention.pdf_57"
-        ]
-    },
-    {
-        "question": "What BLEU score did the Transformer (big) achieve on the WMT 2014 English-to-German translation task?",
-        "expected_chunks": [
-            "attention.pdf_62"
-        ]
-    },
-    {
-        "question": "How did the Transformer compare with previous state-of-the-art models on translation quality and training cost?",
-        "expected_chunks": [
-            "attention.pdf_3",
-            "attention.pdf_59",
-            "attention.pdf_62"
-        ]
-    },
-    {
-        "question": "What advantages of self-attention are discussed compared with recurrent layers?",
-        "expected_chunks": [
-            "attention.pdf_46",
-            "attention.pdf_50",
-            "attention.pdf_53"
-        ]
-    },
-    {
-        "question": "What trade-off of self-attention is mentioned regarding the effective resolution of attention?",
-        "expected_chunks": [
-            "attention.pdf_14"
-        ]
-    },
-    {
-        "question": "What future applications of the Transformer architecture do the authors suggest?",
-        "expected_chunks": [
-            "attention.pdf_81"
-        ]
-    },
-    {
-        "question": "What architecture does the Transformer replace in the standard encoder-decoder approach?",
-        "expected_chunks": [
-            "attention.pdf_16",
-            "attention.pdf_17",
-            "attention.pdf_79"
-        ]
-    }
+  {
+    "question": "What is the main architecture proposed in the paper?",
+    "expected_chunks": [
+      "attention.pdf_19"
+    ],
+    "expected_answer": "The paper proposes the Transformer, a sequence transduction model based entirely on attention mechanisms, replacing recurrent layers with multi-headed self-attention."
+  },
+  {
+    "question": "Why do the authors propose using self-attention instead of recurrent or convolutional layers?",
+    "expected_chunks": [
+      "attention.pdf_46",
+      "attention.pdf_50",
+      "attention.pdf_53"
+    ],
+    "expected_answer": "The authors propose self-attention because it allows the model to establish dependencies between all positions in a sequence while being more parallelizable and requiring less sequential computation than recurrent layers. It also provides shorter paths between positions and can be more efficient for many sequence transduction tasks."
+  },
+  {
+    "question": "What are the two main components of the Transformer architecture?",
+    "expected_chunks": [
+      "attention.pdf_17",
+      "attention.pdf_19"
+    ],
+    "expected_answer": "The Transformer consists of an encoder and a decoder. The encoder processes the input sequence, while the decoder generates the output sequence."
+  },
+  {
+    "question": "How many encoder and decoder layers are used in the base Transformer model?",
+    "expected_chunks": [
+      "attention.pdf_19",
+      "attention.pdf_20"
+    ],
+    "expected_answer": "The base Transformer uses a stack of six identical encoder layers and six identical decoder layers."
+  },
+  {
+    "question": "What is the dimensionality of the model embeddings in the base Transformer?",
+    "expected_chunks": [
+      "attention.pdf_38",
+      "attention.pdf_39"
+    ],
+    "expected_answer": "The base Transformer uses a model dimension of 512, so the embeddings and other sublayer representations have dimensionality 512."
+  },
+  {
+    "question": "What is scaled dot-product attention?",
+    "expected_chunks": [
+      "attention.pdf_24",
+      "attention.pdf_25",
+      "attention.pdf_26"
+    ],
+    "expected_answer": "Scaled dot-product attention computes the dot products between queries and keys, scales the results by the square root of the key dimension, applies a softmax function, and uses the resulting weights to compute a weighted sum of the values."
+  },
+  {
+    "question": "Why is the dot product scaled by the square root of the key dimension?",
+    "expected_chunks": [
+      "attention.pdf_28",
+      "attention.pdf_29",
+      "attention.pdf_30"
+    ],
+    "expected_answer": "The dot product is scaled by the square root of the key dimension because large dot-product values can push the softmax function into regions with extremely small gradients. Scaling helps keep the values in a more suitable range and improves training."
+  },
+  {
+    "question": "What is multi-head attention and why is it used in the Transformer?",
+    "expected_chunks": [
+      "attention.pdf_29",
+      "attention.pdf_31",
+      "attention.pdf_33"
+    ],
+    "expected_answer": "Multi-head attention projects queries, keys, and values into multiple lower-dimensional representations, performs attention in parallel for each representation, and then concatenates and projects the results. It allows the model to attend to information from different representation subspaces and at different positions."
+  },
+  {
+    "question": "How does the Transformer incorporate information about the position of tokens in a sequence?",
+    "expected_chunks": [
+      "attention.pdf_42",
+      "attention.pdf_43"
+    ],
+    "expected_answer": "The Transformer adds positional encodings to the input embeddings so that the model can use information about the position of tokens. The paper uses sine and cosine functions of different frequencies to generate these positional encodings."
+  },
+  {
+    "question": "What optimization algorithm and learning-rate schedule were used to train the Transformer?",
+    "expected_chunks": [
+      "attention.pdf_57"
+    ],
+    "expected_answer": "The Transformer was trained using the Adam optimizer with β1 = 0.9, β2 = 0.98, and ε = 10−9. The learning rate was increased linearly during the warmup period and then decreased proportionally to the inverse square root of the step number."
+  },
+  {
+    "question": "What BLEU score did the Transformer (big) achieve on the WMT 2014 English-to-German translation task?",
+    "expected_chunks": [
+      "attention.pdf_62"
+    ],
+    "expected_answer": "The Transformer (big) achieved a BLEU score of 28.4 on the WMT 2014 English-to-German translation task."
+  },
+  {
+    "question": "How did the Transformer compare with previous state-of-the-art models on translation quality and training cost?",
+    "expected_chunks": [
+      "attention.pdf_3",
+      "attention.pdf_59",
+      "attention.pdf_62"
+    ],
+    "expected_answer": "The Transformer achieved better translation quality than previous state-of-the-art models while requiring substantially less training time and computational cost. The paper reports that the Transformer was trained significantly faster than recurrent and convolutional architectures."
+  },
+  {
+    "question": "What advantages of self-attention are discussed compared with recurrent layers?",
+    "expected_chunks": [
+      "attention.pdf_46",
+      "attention.pdf_50",
+      "attention.pdf_53"
+    ],
+    "expected_answer": "Compared with recurrent layers, self-attention provides greater parallelization during training, shorter paths between positions in a sequence, and lower sequential computation. It allows dependencies between positions to be modeled without processing the sequence recurrently."
+  },
+  {
+    "question": "What trade-off of self-attention is mentioned regarding the effective resolution of attention?",
+    "expected_chunks": [
+      "attention.pdf_14"
+    ],
+    "expected_answer": "Self-attention has an advantage in computational complexity and path length, but it can have a lower effective resolution than recurrent or convolutional layers when attending over long sequences because attention connects every position with every other position."
+  },
+  {
+    "question": "What future applications of the Transformer architecture do the authors suggest?",
+    "expected_chunks": [
+      "attention.pdf_81"
+    ],
+    "expected_answer": "The authors suggest that future work could extend the Transformer to other tasks and modalities, including reducing restrictions on input and output sequence lengths and investigating applications beyond the translation tasks studied in the paper."
+  },
+  {
+    "question": "What architecture does the Transformer replace in the standard encoder-decoder approach?",
+    "expected_chunks": [
+      "attention.pdf_16",
+      "attention.pdf_17",
+      "attention.pdf_79"
+    ],
+    "expected_answer": "The Transformer replaces the recurrent layers commonly used in standard encoder-decoder architectures with multi-headed self-attention."
+  }
 ]
