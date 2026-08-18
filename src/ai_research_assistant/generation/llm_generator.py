@@ -35,7 +35,7 @@ class LLMGenerator(BaseGenerator):
 
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
-            torch_dtype=dtype
+            dtype=dtype
         )
 
         self.model.to(

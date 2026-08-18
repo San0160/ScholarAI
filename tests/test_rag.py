@@ -1,35 +1,104 @@
-from ai_research_assistant.pipeline.indexing_pipeline import IndexingPipeline
-from ai_research_assistant.pipeline.query_pipeline import QueryPipeline
+from ai_research_assistant.config.configuration import ConfigurationManager
+
+from ai_research_assistant.pipeline.retrieval_pipeline import RetrievalPipeline
+from ai_research_assistant.pipeline.generation_pipeline import GenerationPipeline
 
 
-# -------------------------
-# Index document
-# -------------------------
+# --------------------------------------------------
+# Configuration
+# --------------------------------------------------
 
-indexing_pipeline = IndexingPipeline()
+config = ConfigurationManager().config
 
-result = indexing_pipeline.run(
-    "data/documents/attention.pdf"
+
+# --------------------------------------------------
+# Question
+# --------------------------------------------------
+
+query = (
+    "What optimization algorithm and learning-rate schedule "
+    "were used to train the Transformer?"
 )
 
-print("Indexing complete:", result)
 
-print(
-    "Vectors in FAISS:",
-    indexing_pipeline.vector_store.index.ntotal
+# --------------------------------------------------
+# Retrieval
+# --------------------------------------------------
+
+retrieval_pipeline = RetrievalPipeline()
+
+retrieved_results = retrieval_pipeline.run(
+    query
 )
 
 
-# -------------------------
-# Ask question
-# -------------------------
-'''
-query_pipeline = QueryPipeline()
+# --------------------------------------------------
+# Display Retrieved Chunks
+# --------------------------------------------------
 
-answer = query_pipeline.run(
-    "What is the main contribution of this paper?"
+print("\n" + "=" * 80)
+print("RETRIEVED CONTEXT")
+print("=" * 80)
+
+for rank, result in enumerate(
+    retrieved_results,
+    start=1
+):
+
+    chunk_id = result.document.metadata.get(
+        "chunk_id",
+        "unknown"
+    )
+
+    page = result.document.metadata.get(
+        "page",
+        "unknown"
+    )
+
+    print(
+        f"\nRank: {rank}"
+        f"\nChunk: {chunk_id}"
+        f"\nPage: {page}"
+        f"\nScore: {result.score}"
+    )
+
+    print(
+        f"\nContent:\n"
+        f"{result.document.page_content}"
+    )
+
+
+# --------------------------------------------------
+# Extract Documents
+# --------------------------------------------------
+
+documents = [
+    result.document
+    for result in retrieved_results
+]
+
+
+# --------------------------------------------------
+# Generation
+# --------------------------------------------------
+
+generation_pipeline = GenerationPipeline(
+    model_name="Qwen/Qwen2.5-1.5B-Instruct"
 )
 
-print("\nAnswer:")
+
+answer = generation_pipeline.run(
+    query=query,
+    documents=documents
+)
+
+
+# --------------------------------------------------
+# Final Answer
+# --------------------------------------------------
+
+print("\n" + "=" * 80)
+print("SCHOLARAI ANSWER")
+print("=" * 80)
+
 print(answer)
-'''
