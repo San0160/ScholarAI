@@ -1,5 +1,5 @@
 from ai_research_assistant.llm.llm_factory import LLMFactory
-from ai_research_assistant.prompts.prompt_builder import PromptBuilder
+from ai_research_assistant.generation.prompt_builder import PromptBuilder
 
 
 class AnswerGenerator:

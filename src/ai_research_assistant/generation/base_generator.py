@@ -6,7 +6,6 @@ class BaseGenerator(ABC):
     @abstractmethod
     def generate(
         self,
-        prompt: str
+        messages: list[dict]
     ) -> str:
-
         pass

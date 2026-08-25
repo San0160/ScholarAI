@@ -1,6 +1,6 @@
 from ai_research_assistant.pipeline.retrieval_pipeline import RetrievalPipeline
 from ai_research_assistant.answers.answer_generator import AnswerGenerator
-from ai_research_assistant.context.context_builder import ContextBuilder
+from ai_research_assistant.generation.context_builder import ContextBuilder
 
 
 class QueryPipeline:
