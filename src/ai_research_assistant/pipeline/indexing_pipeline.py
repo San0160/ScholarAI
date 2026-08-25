@@ -10,14 +10,17 @@ from ai_research_assistant.utils.text_cleaner import TextCleaner
 
 class IndexingPipeline:
 
-    def __init__(self):
+    def __init__(
+        self,
+        storage_path: str = None
+    ):
 
         config = ConfigurationManager().config
 
         self.loader = DocumentLoader()
 
         self.cleaner = TextCleaner()
-        
+
         self.chunker = RecursiveChunker(
             chunk_size=config.chunking.chunk_size,
             chunk_overlap=config.chunking.chunk_overlap
@@ -26,23 +29,37 @@ class IndexingPipeline:
         self.embedder = EmbeddingFactory.create_embedding()
 
         self.vector_store = VectorStoreFactory.create_vector_store(
-            dimension=self.embedder.dimension
+            dimension=self.embedder.dimension,
+            storage_path=storage_path
         )
 
-    def run(self, file_path: str):
+    def run(self, file_paths: list[str]):
 
-        # 1. Load document
-        documents = self.loader.load(file_path)
+        # 1. Load all documents
+        documents = []
+
+        for file_path in file_paths:
+
+            loaded_documents = self.loader.load(
+                file_path
+            )
+
+            documents.extend(
+                loaded_documents
+            )
+
 
         # 2. Clean text
         documents = self.cleaner.clean_documents(
             documents
         )
 
+
         # 3. Create chunks
         chunks = self.chunker.split_documents(
             documents
         )
+
 
         # 4. Generate embeddings
         texts = [
@@ -54,16 +71,21 @@ class IndexingPipeline:
             texts
         )
 
+
         # 5. Add to vector store
         self.vector_store.add_documents(
             chunks,
             embeddings
         )
 
+
         # 6. Persist index
         self.vector_store.save()
 
+
         return {
+            "files": len(file_paths),
             "documents": len(documents),
-            "chunks": len(chunks)
+            "chunks": len(chunks),
+            "vectors": self.vector_store.index.ntotal
         }

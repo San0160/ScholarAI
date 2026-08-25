@@ -1,0 +1,18 @@
+[
+    {
+        "question": "What optimization algorithm was used to train the Transformer?",
+        "expected_source": "attention.pdf"
+    },
+    {
+        "question": "What is the main idea behind atrous convolution in the DeepLab paper?",
+        "expected_source": "deeplab.pdf"
+    },
+    {
+        "question": "How was transfer learning used in the image segmentation assignment?",
+        "expected_source": "Image_Segmentation.pdf"
+    },
+    {
+        "question": "Which model was fine-tuned for the text summarization project?",
+        "expected_source": "Text_Summariser.pdf"
+    }
+]

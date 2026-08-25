@@ -90,7 +90,6 @@ documents = [
 # --------------------------------------------------
 
 generation_pipeline = GenerationPipeline(
-    model_name="Qwen/Qwen2.5-3B-Instruct",
     embedder=embedder
 )
 
@@ -106,9 +105,13 @@ result = generation_pipeline.run(
 # --------------------------------------------------
 
 print("\n" + "=" * 80)
-print("SCHOLARAI ANSWER")
+print("RAW ANSWER (pre-formatting)")
 print("=" * 80)
+print(result["raw_answer"])
 
+print("\n" + "=" * 80)
+print("SCHOLARAI ANSWER (formatted)")
+print("=" * 80)
 print(result["answer"])
 
 

@@ -5,12 +5,17 @@ from ai_research_assistant.vector_store.faiss_vector_store import FAISSVectorSto
 class VectorStoreFactory:
 
     @staticmethod
-    def create_vector_store(dimension: int):
+    def create_vector_store(
+        dimension: int,
+        storage_path: str = None
+    ):
 
         config = ConfigurationManager().config
 
         provider = config.vector_store.provider
-        storage_path = config.vector_store.path
+
+        if storage_path is None:
+            storage_path = config.vector_store.path
 
         if provider == "faiss":
             return FAISSVectorStore(
