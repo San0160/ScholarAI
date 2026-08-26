@@ -21,4 +21,8 @@ torch
 
 huggingface_hub[hf_xet]
 
+fastapi
+uvicorn
+pydantic
+
 -e .
