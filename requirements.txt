@@ -25,4 +25,6 @@ fastapi
 uvicorn
 pydantic
 
+python-multipart
+
 -e .

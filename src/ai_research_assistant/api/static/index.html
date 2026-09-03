@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ScholarAI</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 640px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        h1 { font-size: 1.5rem; }
+        h2 { font-size: 1.1rem; margin-top: 3rem; }
+        section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        input[type="file"], input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.5rem;
+            margin: 0.75rem 0;
+        }
+        button {
+            padding: 0.5rem 1.2rem;
+            cursor: pointer;
+        }
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        #upload-status, #query-status {
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        #answer-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f7f7f7;
+            border-radius: 6px;
+            display: none;
+        }
+        #answer-text {
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        .citations {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #444;
+        }
+        .citations ul {
+            padding-left: 1.2rem;
+            margin: 0.3rem 0 0 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ScholarAI</h1>
+
+    <h2>1. Upload a document</h2>
+    <section>
+        <form id="upload-form">
+            <input type="file" id="file-input" name="file" accept=".pdf,.docx,.txt,.md" required>
+            <button type="submit" id="upload-btn">Upload &amp; Index</button>
+        </form>
+        <div id="upload-status"></div>
+    </section>
+
+    <h2>2. Ask a question</h2>
+    <section>
+        <form id="query-form">
+            <input type="text" id="question-input" placeholder="What optimization algorithm was used?" required>
+            <button type="submit" id="query-btn">Ask</button>
+        </form>
+        <div id="query-status"></div>
+
+        <div id="answer-box">
+            <div id="answer-text"></div>
+            <div class="citations" id="citations-box"></div>
+        </div>
+    </section>
+
+    <script>
+        // ---------- Upload ----------
+        const uploadForm = document.getElementById("upload-form");
+        const uploadStatus = document.getElementById("upload-status");
+        const uploadBtn = document.getElementById("upload-btn");
+
+        uploadForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById("file-input");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            uploadBtn.disabled = true;
+            uploadStatus.textContent = "Uploading and indexing...";
+
+            try {
+                const response = await fetch("/api/index", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    uploadStatus.textContent = "Error: " + error.detail;
+                    return;
+                }
+
+                const result = await response.json();
+                uploadStatus.textContent =
+                    `Indexed "${result.filename}" — ${result.documents} document(s), ${result.chunks} chunk(s).`;
+
+            } catch (err) {
+                uploadStatus.textContent = "Upload failed: " + err.message;
+            } finally {
+                uploadBtn.disabled = false;
+            }
+        });
+
+        // ---------- Query ----------
+        const queryForm = document.getElementById("query-form");
+        const queryStatus = document.getElementById("query-status");
+        const queryBtn = document.getElementById("query-btn");
+        const answerBox = document.getElementById("answer-box");
+        const answerText = document.getElementById("answer-text");
+        const citationsBox = document.getElementById("citations-box");
+
+        queryForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const question = document.getElementById("question-input").value.trim();
+            if (!question) return;
+
+            queryBtn.disabled = true;
+            queryStatus.textContent = "Thinking...";
+            answerBox.style.display = "none";
+
+            try {
+                const response = await fetch("/api/query", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    queryStatus.textContent = "Error: " + error.detail;
+                    return;
+                }
+
+                const result = await response.json();
+
+                answerText.textContent = result.answer;
+
+                if (result.citations && result.citations.length > 0) {
+                    const items = result.citations
+                        .map(c => `<li>${c.source}${c.page !== null ? ", p. " + c.page : ""}</li>`)
+                        .join("");
+                    citationsBox.innerHTML = `<strong>Sources:</strong><ul>${items}</ul>`;
+                } else {
+                    citationsBox.innerHTML = "";
+                }
+
+                answerBox.style.display = "block";
+                queryStatus.textContent = "";
+
+            } catch (err) {
+                queryStatus.textContent = "Query failed: " + err.message;
+            } finally {
+                queryBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

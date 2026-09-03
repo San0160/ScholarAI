@@ -1,10 +1,5 @@
 from pydantic import BaseModel, Field
 
-
-class IndexRequest(BaseModel):
-    file_path: str = Field(..., description="Path to the document to index")
-
-
 class QueryRequest(BaseModel):
     question: str = Field(..., min_length=1, description="The user's question")
 
@@ -20,5 +15,6 @@ class QueryResponse(BaseModel):
 
 
 class IndexResponse(BaseModel):
+    filename: str
     documents: int
     chunks: int

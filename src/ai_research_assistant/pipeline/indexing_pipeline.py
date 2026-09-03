@@ -33,6 +33,7 @@ class IndexingPipeline:
             storage_path=storage_path
         )
 
+    
     def run(self, file_paths: list[str]):
 
         # 1. Load all documents
@@ -89,3 +90,12 @@ class IndexingPipeline:
             "chunks": len(chunks),
             "vectors": self.vector_store.index.ntotal
         }
+
+    def run_single(self, file_path: str) -> dict:
+    
+            result = self.run([file_path])
+    
+            return {
+                "documents": result["documents"],
+                "chunks": result["chunks"]
+            }
