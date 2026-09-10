@@ -27,4 +27,6 @@ pydantic
 
 python-multipart
 
+pysbd==0.3.4
+
 -e .

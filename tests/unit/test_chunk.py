@@ -3,9 +3,9 @@ from ai_research_assistant.embeddings.embedding_factory import EmbeddingFactory
 from ai_research_assistant.vector_store.vector_store_factory import VectorStoreFactory
 
 
-config = ConfigurationManager().config
+config_manager = ConfigurationManager()
 
-embedder = EmbeddingFactory.create_embedding()
+embedder = EmbeddingFactory.create_embedding(config_manager.get_embedding_config())
 
 vector_store = VectorStoreFactory.create_vector_store(
     dimension=embedder.dimension
