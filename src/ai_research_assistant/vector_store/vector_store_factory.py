@@ -1,3 +1,4 @@
+# vector_store_factory.py
 from ai_research_assistant.config.configuration import ConfigurationManager
 from ai_research_assistant.vector_store.faiss_vector_store import FAISSVectorStore
 
@@ -20,9 +21,9 @@ class VectorStoreFactory:
         if provider == "faiss":
             return FAISSVectorStore(
                 dimension=dimension,
-                storage_path=storage_path
+                storage_path=storage_path,
+                index_name=config.vector_store.index_name,
+                documents_name=config.vector_store.documents_name,
             )
 
-        raise ValueError(
-            f"Unsupported vector store provider: {provider}"
-        )
+        raise ValueError(f"Unsupported vector store provider: {provider}")

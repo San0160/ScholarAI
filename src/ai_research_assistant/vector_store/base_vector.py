@@ -4,11 +4,7 @@ from ai_research_assistant.entity.retrieval_result import RetrievalResult
 class BaseVectorStore(ABC):
 
     @abstractmethod
-    def add_documents(
-        self,
-        documents,
-        embeddings
-    ):
+    def add_documents(self, documents, embeddings):
         pass
 
     @abstractmethod
