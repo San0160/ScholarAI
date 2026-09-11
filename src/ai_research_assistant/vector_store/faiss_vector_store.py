@@ -122,13 +122,23 @@ class FAISSVectorStore(BaseVectorStore):
         index_path = self.storage_path / self.index_name
         documents_path = self.storage_path / self.documents_name
 
-        faiss.write_index(
-            self.index,
-            str(index_path)
-        )
+        index_tmp_path = index_path.with_suffix(index_path.suffix + ".tmp")
+        documents_tmp_path = documents_path.with_suffix(documents_path.suffix + ".tmp")
 
-        with open(documents_path, "wb") as file:
+        faiss.write_index(self.index, str(index_tmp_path))
+
+        with open(documents_tmp_path, "wb") as file:
             pickle.dump(self.documents, file)
+
+        index_tmp_path.replace(index_path)
+        documents_tmp_path.replace(documents_path)
+
+        logger.info(
+            "Saved vector store: %d vectors, %d documents -> %s",
+            self.index.ntotal,
+            len(self.documents),
+            self.storage_path,
+        )
 
     def load(self):
 
@@ -145,3 +155,23 @@ class FAISSVectorStore(BaseVectorStore):
 
         with open(documents_path, "rb") as file:
             self.documents = pickle.load(file)
+
+        if self.index.ntotal != len(self.documents):
+            raise ValueError(
+                f"Vector store is corrupted: index has {self.index.ntotal} "
+                f"vectors but documents file has {len(self.documents)} entries "
+                f"-- rebuild the index"
+            )
+
+        logger.info(
+            "Loaded vector store: %d vectors, %d documents <- %s",
+            self.index.ntotal,
+            len(self.documents),
+            self.storage_path,
+        )
+
+    def clear(self):
+        self.index = faiss.IndexFlatIP(self.dimension)
+        self.documents = []
+
+        logger.info("Cleared vector store (dimension=%d)", self.dimension)

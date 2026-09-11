@@ -8,9 +8,9 @@ class BaseVectorStore(ABC):
         pass
 
     @abstractmethod
-    def similarity_search(
-        self,
-        query_embedding,
-        top_k = 5
-    ) -> list[RetrievalResult]:
+    def similarity_search(self, query_embedding, top_k = 5) -> list[RetrievalResult]:
+        pass
+
+    @abstractmethod
+    def clear(self):
         pass
