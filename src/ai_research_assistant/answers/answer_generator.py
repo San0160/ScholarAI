@@ -9,15 +9,8 @@ class AnswerGenerator:
         self.llm = LLMFactory.create_llm()
         self.prompt_builder = PromptBuilder()
 
-    def generate(
-        self,
-        query: str,
-        context: str
-    ) -> str:
+    def generate(self, query: str, context: str) -> str:
 
-        prompt = self.prompt_builder.build(
-            query=query,
-            context=context
-        )
+        prompt = self.prompt_builder.build(query=query, context=context)
 
         return self.llm.generate(prompt)

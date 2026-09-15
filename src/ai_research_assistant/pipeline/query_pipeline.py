@@ -13,22 +13,10 @@ class QueryPipeline:
 
         self.answer_generator = AnswerGenerator()
 
-    def run(
-        self,
-        query: str
-    ) -> str:
+    def run(self, query: str) -> str:
 
-        results = self.retrieval_pipeline.run(
-            query
-        )
-
-        context = self.context_builder.build(
-            results
-        )
-
-        answer = self.answer_generator.generate(
-            query=query,
-            context=context
-        )
+        results = self.retrieval_pipeline.run(query)
+        context = self.context_builder.build(results)
+        answer = self.answer_generator.generate(query=query, context=context)
 
         return answer
