@@ -1,20 +1,23 @@
-from ai_research_assistant.config.configuration import ConfigurationManager
+# llm_factory.py
+from functools import lru_cache
+
+from ai_research_assistant.entity.config_entity import LLMConfig
+from ai_research_assistant.llm.base_llm import BaseLLM
 from ai_research_assistant.llm.huggingface_llm import HuggingFaceLLM
 
 
 class LLMFactory:
 
     @staticmethod
-    def create_llm():
+    @lru_cache(maxsize=1)
+    def create_llm(config: LLMConfig) -> BaseLLM:
 
-        config = ConfigurationManager().config
+        if config.provider == "huggingface":
+            return HuggingFaceLLM(
+                config.model,
+                device=config.device,
+                max_context_tokens=config.max_context_tokens,
+                max_new_tokens=config.max_new_tokens,
+            )
 
-        provider = config.llm.provider
-        model_name = config.llm.model
-
-        if provider == "huggingface":
-            return HuggingFaceLLM(model_name)
-
-        raise ValueError(
-            f"Unsupported LLM provider: {provider}"
-        )
+        raise ValueError(f"Unsupported LLM provider: {config.provider}")

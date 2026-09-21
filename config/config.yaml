@@ -35,6 +35,9 @@ retrieval:
 llm:
   provider: huggingface
   model: Qwen/Qwen2.5-3B-Instruct
+  device: auto
+  max_context_tokens: 1024
+  max_new_tokens: 256
 
 reranking:
   provider: cross_encoder

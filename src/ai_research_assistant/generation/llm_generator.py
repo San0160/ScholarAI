@@ -4,17 +4,11 @@ from ai_research_assistant.llm.base_llm import BaseLLM
 
 class LLMGenerator(BaseGenerator):
 
-    def __init__(
-        self,
-        llm: BaseLLM
-    ):
+    def __init__(self, llm: BaseLLM):
 
         self.llm = llm
 
-    def generate(
-        self,
-        messages: list[dict]
-    ) -> str:
+    def generate(self, messages: list[dict]) -> str:
 
         if not messages:
 

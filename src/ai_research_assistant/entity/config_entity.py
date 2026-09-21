@@ -15,3 +15,12 @@ class EmbeddingConfig:
     device: str
     batch_size: int
     show_progress_bar: bool
+
+
+@dataclass(frozen=True)
+class LLMConfig:
+    provider: str
+    model: str
+    device: str
+    max_context_tokens: int
+    max_new_tokens: int

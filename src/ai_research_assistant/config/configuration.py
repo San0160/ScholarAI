@@ -1,6 +1,7 @@
 from ai_research_assistant.utils.common import *
 from ai_research_assistant.constants import *
 from ai_research_assistant.entity.config_entity import ChunkingConfig, EmbeddingConfig
+from ai_research_assistant.entity.config_entity import ChunkingConfig, EmbeddingConfig, LLMConfig
 
 class ConfigurationManager:
     def __init__(self, config_filepath = CONFIG_FILE_PATH):     # Access to constants
@@ -21,4 +22,13 @@ class ConfigurationManager:
             device=self.config.embeddings.device,
             batch_size=self.config.embeddings.batch_size,
             show_progress_bar=self.config.embeddings.show_progress_bar,
+        )
+
+    def get_llm_config(self) -> LLMConfig:
+        return LLMConfig(
+            provider=self.config.llm.provider,
+            model=self.config.llm.model,
+            device=self.config.llm.device,
+            max_context_tokens=self.config.llm.max_context_tokens,
+            max_new_tokens=self.config.llm.max_new_tokens,
         )
