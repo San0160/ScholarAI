@@ -38,6 +38,7 @@ llm:
   device: auto
   max_context_tokens: 1024
   max_new_tokens: 256
+  n_threads: 4  
 
 reranking:
   provider: cross_encoder

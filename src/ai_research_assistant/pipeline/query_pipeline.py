@@ -16,18 +16,18 @@ class QueryPipeline:
     used standalone in production.
     """
 
-    def __init__(self):
+    def __init__(self, storage_path: str = None):
 
         config_manager = ConfigurationManager()
         embedder = EmbeddingFactory.create_embedding(config_manager.get_embedding_config())
         self.retrieval_pipeline = RetrievalPipeline(storage_path=storage_path)
         self.generation_pipeline = GenerationPipeline(embedder=embedder)
 
-    def run(self, query: str) -> str:
+    def run(self, query: str, metadata_filters: dict = None, min_score: float = None) -> dict:
 
         results = self.retrieval_pipeline.run(query, metadata_filters=metadata_filters, min_score=min_score)
         documents = [result.document for result in results]
         response = self.generation_pipeline.run(query, documents)
         logger.info("QueryPipeline.run(): answered using %d retrieved document(s)", len(documents))
-        
+
         return response

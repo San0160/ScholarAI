@@ -3,94 +3,39 @@ import numpy as np
 
 class CitationMatcher:
 
-    def __init__(
-        self,
-        embedder,
-        threshold: float = 0.65
-    ):
-
+    def __init__(self, embedder, threshold: float = 0.65, max_citations: int = 3):
         self.embedder = embedder
         self.threshold = threshold
+        self.max_citations = max_citations
 
-    def match(
-        self,
-        answer: str,
-        documents,
-        source_map: dict
-    ) -> list[dict]:
-
+    def match(self, answer: str, documents, source_map: dict) -> list[dict]:
         if not answer.strip():
             return []
-
-        answer_embedding = np.array(
-            self.embedder.embed_query(
-                answer
-            )
-        )
-
-        matches = []
-
-        for source_id, document in enumerate(
-            documents,
-            start=1
-        ):
-
-            document_embedding = np.array(
-                self.embedder.embed_query(
-                    document.page_content
-                )
-            )
-
-            score = self._cosine_similarity(
-                answer_embedding,
-                document_embedding
-            )
-
-            matches.append(
-                {
-                    "source_id": source_id,
-                    "score": float(score)
-                }
-            )
-
-        if not matches:
+        if not documents:
             return []
 
-        matches.sort(
-            key=lambda item: item["score"],
-            reverse=True
+        answer_embedding = np.array(self.embedder.embed_query(answer))
+        document_embeddings = np.array(
+            self.embedder.embed_documents([document.page_content for document in documents])
         )
 
-        best_match = matches[0]
+        scores = self._cosine_similarity_batch(answer_embedding, document_embeddings)
 
-        if best_match["score"] < self.threshold:
-            return []
+        matches = [
+            {"source_id": source_id, "score": float(score)}
+            for source_id, score in enumerate(scores, start=1)
+            if score >= self.threshold
+        ]
 
-        return [best_match]
+        matches.sort(key=lambda item: item["score"], reverse=True)
+
+        return matches[: self.max_citations]
 
     @staticmethod
-    def _cosine_similarity(
-        vector_a: np.ndarray,
-        vector_b: np.ndarray
-    ) -> float:
-
-        norm_a = np.linalg.norm(
-            vector_a
-        )
-
-        norm_b = np.linalg.norm(
-            vector_b
-        )
-
-        if norm_a == 0 or norm_b == 0:
-            return 0.0
-
-        return float(
-            np.dot(
-                vector_a,
-                vector_b
-            )
-            / (
-                norm_a * norm_b
-            )
-        )
+    def _cosine_similarity_batch(query_vector: np.ndarray, matrix: np.ndarray) -> np.ndarray:
+        query_norm = np.linalg.norm(query_vector)
+        matrix_norms = np.linalg.norm(matrix, axis=1)
+        denom = query_norm * matrix_norms
+        safe_denom = np.where(denom == 0, 1.0, denom)
+        similarities = (matrix @ query_vector) / safe_denom
+        return np.where(denom == 0, 0.0, similarities)
