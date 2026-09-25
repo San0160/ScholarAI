@@ -62,27 +62,26 @@ class RecursiveChunker(BaseChunker):
 
     def split_documents(self, documents: list[Document]) -> list[Document]:
         chunks = []
+        chunk_index_by_filename: dict[str, int] = {}
 
         for document in documents:
             spans = self._split_text(document.page_content)
 
             for span in spans:
-
                 if not span.text.strip():
                     continue
 
                 metadata = document.metadata.copy()
+                filename = metadata.get("filename", "document")
 
-                metadata["chunk_id"] = (
-                    f"{metadata.get('filename', 'document')}_"
-                    f"{len(chunks)}"
-                )
+                chunk_index = chunk_index_by_filename.get(filename, 0)
+                metadata["chunk_id"] = f"{filename}_{chunk_index}"
+                chunk_index_by_filename[filename] = chunk_index + 1
+
                 metadata["start_char"] = span.start
                 metadata["end_char"] = span.end
 
-                chunks.append(
-                    Document(page_content=span.text.strip(), metadata=metadata)
-                )
+                chunks.append(Document(page_content=span.text.strip(), metadata=metadata))
 
         return chunks
 

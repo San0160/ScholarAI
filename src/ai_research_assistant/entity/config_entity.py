@@ -15,6 +15,9 @@ class EmbeddingConfig:
     device: str
     batch_size: int
     show_progress_bar: bool
+    api_base_url: str = None
+    api_key_env_var: str = None
+    dimension: int = None
 
 
 @dataclass(frozen=True)

@@ -48,7 +48,7 @@ class GenerationPipeline:
         )
 
         self.prompt_builder = PromptBuilder()
-        self.generator = GeneratorFactory.create_generator()
+        self.generator = GeneratorFactory.create_generator(llm_config)
 
         self.citation_matcher = CitationMatcher(embedder = embedder)
         self.citation_validator = CitationValidator()
@@ -66,6 +66,8 @@ class GenerationPipeline:
             logger.warning("Context is empty after budget filtering -- skipping generation")
             return self._no_context_result()
 
+        cited_documents = documents[: len(source_map)]
+
         messages = self.prompt_builder.build(query=query, context=context)
 
         # Capture the model's true, untouched output
@@ -74,7 +76,7 @@ class GenerationPipeline:
         try:
             citation_matches = self.citation_matcher.match(
                 answer=raw_answer,
-                documents=documents,
+                documents=cited_documents,
                 source_map=source_map
             )
 

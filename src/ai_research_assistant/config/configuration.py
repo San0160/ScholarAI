@@ -16,12 +16,16 @@ class ConfigurationManager:
         )
 
     def get_embedding_config(self) -> EmbeddingConfig:
+        embeddings = self.config.embeddings
         return EmbeddingConfig(
-            provider=self.config.embeddings.provider,
-            model=self.config.embeddings.model,
-            device=self.config.embeddings.device,
-            batch_size=self.config.embeddings.batch_size,
-            show_progress_bar=self.config.embeddings.show_progress_bar,
+            provider=embeddings.provider,
+            model=embeddings.model,
+            device=embeddings.get("device", "auto"),
+            batch_size=embeddings.get("batch_size", 32),
+            show_progress_bar=embeddings.get("show_progress_bar", False),
+            api_base_url=embeddings.get("api_base_url"),
+            api_key_env_var=embeddings.get("api_key_env_var"),
+            dimension=embeddings.get("dimension"),
         )
 
     def get_llm_config(self) -> LLMConfig:

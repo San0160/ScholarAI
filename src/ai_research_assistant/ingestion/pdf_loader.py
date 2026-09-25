@@ -12,7 +12,6 @@ class PdfLoader:
     MAX_HEADING_WORDS = 8
     MAX_HEADING_CHARS = 80
 
-    # Generic structural noise filters — not tied to any specific document's content
     NOISE_PATTERNS = [
         re.compile(r"https?://", re.IGNORECASE),
         re.compile(r"^www\.", re.IGNORECASE),
@@ -21,51 +20,39 @@ class PdfLoader:
         re.compile(r"^\d+$"),                          # standalone page numbers
     ]
 
-    def load(self, file_path: str) -> list[Document]:      
-
+    def load(self, file_path: str) -> list[Document]:
         file_path = Path(file_path)
         pdf = fitz.open(file_path)
-
         body_font_size = self._estimate_body_font_size(pdf)
 
         documents = []
         current_section = None
-        
+
         for page_number, page in enumerate(pdf, start=1):
-
             lines = self._extract_lines(page)
-
             if not lines:
                 continue
 
-            segments = self._segment_by_heading(
-                lines,
-                body_font_size,
-                current_section
-            )
+            segments = self._segment_by_heading(lines, body_font_size, current_section)
 
             for section, text in segments:
-
                 text = text.strip()
-
                 if not text:
                     continue
 
                 current_section = section
 
-            metadata = {
-                "filename": file_path.name,
-                "file_type": "pdf",
-                "page": page_number
-            }
+                metadata = {
+                    "filename": file_path.name,
+                    "file_type": "pdf",
+                    "page": page_number,
+                }
+                if current_section:
+                    metadata["section"] = current_section
 
-            if current_section:
-                metadata["section"] = current_section
-
-            documents.append(Document(page_content=text, metadata=metadata))
+                documents.append(Document(page_content=text, metadata=metadata))
 
         pdf.close()
-
         return documents
 
     def _estimate_body_font_size(self, pdf) -> float:

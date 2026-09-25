@@ -16,12 +16,19 @@ chunking:
   chunk_size: 350
   chunk_overlap: 50
 
+#embeddings:
+#  provider: huggingface
+#  model: BAAI/bge-small-en-v1.5
+#  device: auto
+#  batch_size: 32
+#  show_progress_bar: false
+
 embeddings:
-  provider: huggingface
-  model: BAAI/bge-small-en-v1.5
-  device: auto
-  batch_size: 32
-  show_progress_bar: false
+  provider: api
+  model: nvidia/llama-nemotron-embed-vl-1b-v2
+  api_base_url: https://integrate.api.nvidia.com/v1
+  api_key_env_var: NVIDIA_API_KEY
+  dimension: 2048
 
 vector_store:
   provider: faiss

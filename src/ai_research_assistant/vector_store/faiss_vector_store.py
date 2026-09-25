@@ -141,33 +141,41 @@ class FAISSVectorStore(BaseVectorStore):
         )
 
     def load(self):
-
         index_path = self.storage_path / self.index_name
         documents_path = self.storage_path / self.documents_name
 
-        if not index_path.exists():
-            raise FileNotFoundError(f"FAISS index not found: {index_path}")
-
-        if not documents_path.exists():
-            raise FileNotFoundError(f"Documents file not found: {documents_path}")
-
-        self.index = faiss.read_index(str(index_path))
-
-        with open(documents_path, "rb") as file:
-            self.documents = pickle.load(file)
-
-        if self.index.ntotal != len(self.documents):
-            raise ValueError(
-                f"Vector store is corrupted: index has {self.index.ntotal} "
-                f"vectors but documents file has {len(self.documents)} entries "
-                f"-- rebuild the index"
+        if not index_path.exists() or not documents_path.exists():
+            raise FileNotFoundError(
+                f"No existing vector store found at '{self.storage_path}' "
+                f"(expected '{self.index_name}' and '{self.documents_name}')"
             )
 
+        index = faiss.read_index(str(index_path))
+
+        if index.d != self.dimension:
+            raise ValueError(
+                f"Loaded index dimension ({index.d}) does not match the configured "
+                f"embedding dimension ({self.dimension}) -- this usually means the embedding "
+                f"model/provider changed since this index was built. Delete the existing "
+                f"index/documents files (or run indexing with rebuild=True) to re-embed "
+                f"everything with the current model."
+            )
+
+        with open(documents_path, "rb") as f:
+            documents = pickle.load(f)
+
+        if index.ntotal != len(documents):
+            raise ValueError(
+                f"Index/documents count mismatch after loading: index has {index.ntotal} "
+                f"vector(s) but {len(documents)} document(s) were loaded -- the vector store "
+                f"files may be corrupted or out of sync."
+            )
+
+        self.index = index
+        self.documents = documents
         logger.info(
-            "Loaded vector store: %d vectors, %d documents <- %s",
-            self.index.ntotal,
-            len(self.documents),
-            self.storage_path,
+            "Loaded vector store from '%s': %d document(s), dimension=%d",
+            self.storage_path, len(self.documents), self.dimension,
         )
 
     def clear(self):
