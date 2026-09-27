@@ -2,7 +2,7 @@ import numpy as np
 
 
 class CitationMatcher:
-
+    
     def __init__(self, embedder, threshold: float = 0.65, max_citations: int = 3):
         self.embedder = embedder
         self.threshold = threshold
@@ -13,6 +13,14 @@ class CitationMatcher:
             return []
         if not documents:
             return []
+
+        if len(documents) != len(source_map):
+            raise ValueError(
+                f"documents ({len(documents)}) and source_map ({len(source_map)}) are "
+                f"out of sync -- CitationMatcher assumes documents[i] corresponds to "
+                f"source_map[i + 1]. Pass the same document slice that was used to "
+                f"build source_map."
+            )
 
         answer_embedding = np.array(self.embedder.embed_query(answer))
         document_embeddings = np.array(

@@ -1,0 +1,1019 @@
+[
+  {
+    "question": "What is the main architecture proposed in the paper?",
+    "old_expected_chunks": [
+      "attention.pdf_19"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_2",
+      "attention.pdf_30",
+      "attention.pdf_5",
+      "attention.pdf_6",
+      "attention.pdf_8"
+    ],
+    "question_only_candidates": [],
+    "answer_only_candidates": [],
+    "question_top_k": [
+      [
+        "attention.pdf_2",
+        0.256
+      ],
+      [
+        "attention.pdf_5",
+        0.234
+      ],
+      [
+        "attention.pdf_8",
+        0.231
+      ],
+      [
+        "attention.pdf_6",
+        0.227
+      ],
+      [
+        "attention.pdf_30",
+        0.221
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_30",
+        0.652
+      ],
+      [
+        "attention.pdf_2",
+        0.556
+      ],
+      [
+        "attention.pdf_6",
+        0.541
+      ],
+      [
+        "attention.pdf_5",
+        0.518
+      ],
+      [
+        "attention.pdf_8",
+        0.439
+      ]
+    ]
+  },
+  {
+    "question": "Why do the authors propose using self-attention instead of recurrent or convolutional layers?",
+    "old_expected_chunks": [
+      "attention.pdf_46",
+      "attention.pdf_50",
+      "attention.pdf_53"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_17",
+      "attention.pdf_18",
+      "attention.pdf_30",
+      "attention.pdf_6"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_15"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_5"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_17",
+        0.517
+      ],
+      [
+        "attention.pdf_6",
+        0.49
+      ],
+      [
+        "attention.pdf_18",
+        0.467
+      ],
+      [
+        "attention.pdf_15",
+        0.413
+      ],
+      [
+        "attention.pdf_30",
+        0.394
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_17",
+        0.605
+      ],
+      [
+        "attention.pdf_6",
+        0.542
+      ],
+      [
+        "attention.pdf_5",
+        0.509
+      ],
+      [
+        "attention.pdf_18",
+        0.496
+      ],
+      [
+        "attention.pdf_30",
+        0.425
+      ]
+    ]
+  },
+  {
+    "question": "What are the two main components of the Transformer architecture?",
+    "old_expected_chunks": [
+      "attention.pdf_17",
+      "attention.pdf_19"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_2",
+      "attention.pdf_30",
+      "attention.pdf_8"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_5",
+      "attention.pdf_6"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_13",
+      "attention.pdf_7"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_8",
+        0.502
+      ],
+      [
+        "attention.pdf_30",
+        0.445
+      ],
+      [
+        "attention.pdf_2",
+        0.433
+      ],
+      [
+        "attention.pdf_5",
+        0.432
+      ],
+      [
+        "attention.pdf_6",
+        0.377
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_8",
+        0.471
+      ],
+      [
+        "attention.pdf_7",
+        0.444
+      ],
+      [
+        "attention.pdf_30",
+        0.405
+      ],
+      [
+        "attention.pdf_13",
+        0.377
+      ],
+      [
+        "attention.pdf_2",
+        0.376
+      ]
+    ]
+  },
+  {
+    "question": "How many encoder and decoder layers are used in the base Transformer model?",
+    "old_expected_chunks": [
+      "attention.pdf_19",
+      "attention.pdf_20"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_22",
+      "attention.pdf_25",
+      "attention.pdf_30",
+      "attention.pdf_8"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_2"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_12"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_8",
+        0.444
+      ],
+      [
+        "attention.pdf_25",
+        0.417
+      ],
+      [
+        "attention.pdf_30",
+        0.413
+      ],
+      [
+        "attention.pdf_22",
+        0.403
+      ],
+      [
+        "attention.pdf_2",
+        0.402
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_8",
+        0.457
+      ],
+      [
+        "attention.pdf_25",
+        0.388
+      ],
+      [
+        "attention.pdf_22",
+        0.363
+      ],
+      [
+        "attention.pdf_12",
+        0.349
+      ],
+      [
+        "attention.pdf_30",
+        0.34
+      ]
+    ]
+  },
+  {
+    "question": "What is the dimensionality of the model embeddings in the base Transformer?",
+    "old_expected_chunks": [
+      "attention.pdf_38",
+      "attention.pdf_39"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_22",
+      "attention.pdf_25",
+      "attention.pdf_8"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_24",
+      "attention.pdf_26"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_13",
+      "attention.pdf_18"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_25",
+        0.397
+      ],
+      [
+        "attention.pdf_22",
+        0.381
+      ],
+      [
+        "attention.pdf_24",
+        0.367
+      ],
+      [
+        "attention.pdf_8",
+        0.364
+      ],
+      [
+        "attention.pdf_26",
+        0.36
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_8",
+        0.398
+      ],
+      [
+        "attention.pdf_13",
+        0.362
+      ],
+      [
+        "attention.pdf_22",
+        0.362
+      ],
+      [
+        "attention.pdf_25",
+        0.357
+      ],
+      [
+        "attention.pdf_18",
+        0.321
+      ]
+    ]
+  },
+  {
+    "question": "What is scaled dot-product attention?",
+    "old_expected_chunks": [
+      "attention.pdf_24",
+      "attention.pdf_25",
+      "attention.pdf_26"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_10",
+      "attention.pdf_11",
+      "attention.pdf_13",
+      "attention.pdf_9"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_6"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_14"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_10",
+        0.555
+      ],
+      [
+        "attention.pdf_11",
+        0.406
+      ],
+      [
+        "attention.pdf_6",
+        0.295
+      ],
+      [
+        "attention.pdf_13",
+        0.291
+      ],
+      [
+        "attention.pdf_9",
+        0.279
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_10",
+        0.613
+      ],
+      [
+        "attention.pdf_11",
+        0.469
+      ],
+      [
+        "attention.pdf_9",
+        0.395
+      ],
+      [
+        "attention.pdf_13",
+        0.334
+      ],
+      [
+        "attention.pdf_14",
+        0.317
+      ]
+    ]
+  },
+  {
+    "question": "Why is the dot product scaled by the square root of the key dimension?",
+    "old_expected_chunks": [
+      "attention.pdf_28",
+      "attention.pdf_29",
+      "attention.pdf_30"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_10",
+      "attention.pdf_11",
+      "attention.pdf_9"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_14",
+      "attention.pdf_16"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_13",
+      "attention.pdf_20"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_11",
+        0.331
+      ],
+      [
+        "attention.pdf_10",
+        0.305
+      ],
+      [
+        "attention.pdf_9",
+        0.197
+      ],
+      [
+        "attention.pdf_16",
+        0.191
+      ],
+      [
+        "attention.pdf_14",
+        0.157
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_11",
+        0.464
+      ],
+      [
+        "attention.pdf_10",
+        0.395
+      ],
+      [
+        "attention.pdf_13",
+        0.278
+      ],
+      [
+        "attention.pdf_20",
+        0.261
+      ],
+      [
+        "attention.pdf_9",
+        0.256
+      ]
+    ]
+  },
+  {
+    "question": "What is multi-head attention and why is it used in the Transformer?",
+    "old_expected_chunks": [
+      "attention.pdf_29",
+      "attention.pdf_31",
+      "attention.pdf_33"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_10",
+      "attention.pdf_12"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_30",
+      "attention.pdf_6",
+      "attention.pdf_8"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_11",
+      "attention.pdf_18",
+      "attention.pdf_9"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_12",
+        0.592
+      ],
+      [
+        "attention.pdf_8",
+        0.466
+      ],
+      [
+        "attention.pdf_30",
+        0.409
+      ],
+      [
+        "attention.pdf_6",
+        0.409
+      ],
+      [
+        "attention.pdf_10",
+        0.394
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_12",
+        0.605
+      ],
+      [
+        "attention.pdf_11",
+        0.498
+      ],
+      [
+        "attention.pdf_10",
+        0.459
+      ],
+      [
+        "attention.pdf_9",
+        0.379
+      ],
+      [
+        "attention.pdf_18",
+        0.349
+      ]
+    ]
+  },
+  {
+    "question": "How does the Transformer incorporate information about the position of tokens in a sequence?",
+    "old_expected_chunks": [
+      "attention.pdf_42",
+      "attention.pdf_43"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_13",
+      "attention.pdf_8"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_30",
+      "attention.pdf_5",
+      "attention.pdf_6"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_14",
+      "attention.pdf_15",
+      "attention.pdf_16"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_8",
+        0.443
+      ],
+      [
+        "attention.pdf_13",
+        0.419
+      ],
+      [
+        "attention.pdf_6",
+        0.413
+      ],
+      [
+        "attention.pdf_5",
+        0.407
+      ],
+      [
+        "attention.pdf_30",
+        0.39
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_15",
+        0.46
+      ],
+      [
+        "attention.pdf_16",
+        0.446
+      ],
+      [
+        "attention.pdf_13",
+        0.369
+      ],
+      [
+        "attention.pdf_8",
+        0.364
+      ],
+      [
+        "attention.pdf_14",
+        0.33
+      ]
+    ]
+  },
+  {
+    "question": "What optimization algorithm and learning-rate schedule were used to train the Transformer?",
+    "old_expected_chunks": [
+      "attention.pdf_57"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_19",
+      "attention.pdf_22"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_21",
+      "attention.pdf_23",
+      "attention.pdf_30"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_20",
+      "attention.pdf_24",
+      "attention.pdf_25"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_30",
+        0.454
+      ],
+      [
+        "attention.pdf_23",
+        0.433
+      ],
+      [
+        "attention.pdf_22",
+        0.432
+      ],
+      [
+        "attention.pdf_19",
+        0.428
+      ],
+      [
+        "attention.pdf_21",
+        0.426
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_20",
+        0.47
+      ],
+      [
+        "attention.pdf_22",
+        0.361
+      ],
+      [
+        "attention.pdf_19",
+        0.353
+      ],
+      [
+        "attention.pdf_25",
+        0.339
+      ],
+      [
+        "attention.pdf_24",
+        0.336
+      ]
+    ]
+  },
+  {
+    "question": "What BLEU score did the Transformer (big) achieve on the WMT 2014 English-to-German translation task?",
+    "old_expected_chunks": [
+      "attention.pdf_62"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_2",
+      "attention.pdf_21",
+      "attention.pdf_23",
+      "attention.pdf_30"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_19"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_22"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_23",
+        0.574
+      ],
+      [
+        "attention.pdf_21",
+        0.444
+      ],
+      [
+        "attention.pdf_2",
+        0.436
+      ],
+      [
+        "attention.pdf_30",
+        0.384
+      ],
+      [
+        "attention.pdf_19",
+        0.379
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_23",
+        0.566
+      ],
+      [
+        "attention.pdf_21",
+        0.444
+      ],
+      [
+        "attention.pdf_2",
+        0.432
+      ],
+      [
+        "attention.pdf_30",
+        0.382
+      ],
+      [
+        "attention.pdf_22",
+        0.364
+      ]
+    ]
+  },
+  {
+    "question": "How did the Transformer compare with previous state-of-the-art models on translation quality and training cost?",
+    "old_expected_chunks": [
+      "attention.pdf_3",
+      "attention.pdf_59",
+      "attention.pdf_62"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_2",
+      "attention.pdf_21",
+      "attention.pdf_23",
+      "attention.pdf_30"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_24"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_5"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_21",
+        0.545
+      ],
+      [
+        "attention.pdf_23",
+        0.496
+      ],
+      [
+        "attention.pdf_2",
+        0.488
+      ],
+      [
+        "attention.pdf_30",
+        0.487
+      ],
+      [
+        "attention.pdf_24",
+        0.444
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_5",
+        0.542
+      ],
+      [
+        "attention.pdf_30",
+        0.533
+      ],
+      [
+        "attention.pdf_2",
+        0.522
+      ],
+      [
+        "attention.pdf_21",
+        0.494
+      ],
+      [
+        "attention.pdf_23",
+        0.456
+      ]
+    ]
+  },
+  {
+    "question": "What advantages of self-attention are discussed compared with recurrent layers?",
+    "old_expected_chunks": [
+      "attention.pdf_46",
+      "attention.pdf_50",
+      "attention.pdf_53"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_15",
+      "attention.pdf_17",
+      "attention.pdf_18",
+      "attention.pdf_5",
+      "attention.pdf_6"
+    ],
+    "question_only_candidates": [],
+    "answer_only_candidates": [],
+    "question_top_k": [
+      [
+        "attention.pdf_17",
+        0.562
+      ],
+      [
+        "attention.pdf_6",
+        0.441
+      ],
+      [
+        "attention.pdf_18",
+        0.393
+      ],
+      [
+        "attention.pdf_15",
+        0.37
+      ],
+      [
+        "attention.pdf_5",
+        0.339
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_17",
+        0.617
+      ],
+      [
+        "attention.pdf_6",
+        0.509
+      ],
+      [
+        "attention.pdf_5",
+        0.496
+      ],
+      [
+        "attention.pdf_18",
+        0.463
+      ],
+      [
+        "attention.pdf_15",
+        0.452
+      ]
+    ]
+  },
+  {
+    "question": "What trade-off of self-attention is mentioned regarding the effective resolution of attention?",
+    "old_expected_chunks": [
+      "attention.pdf_14"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_17",
+      "attention.pdf_18",
+      "attention.pdf_6"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_34",
+      "attention.pdf_39"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_15",
+      "attention.pdf_5"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_6",
+        0.374
+      ],
+      [
+        "attention.pdf_18",
+        0.31
+      ],
+      [
+        "attention.pdf_17",
+        0.281
+      ],
+      [
+        "attention.pdf_34",
+        0.252
+      ],
+      [
+        "attention.pdf_39",
+        0.243
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_17",
+        0.577
+      ],
+      [
+        "attention.pdf_18",
+        0.517
+      ],
+      [
+        "attention.pdf_6",
+        0.478
+      ],
+      [
+        "attention.pdf_15",
+        0.444
+      ],
+      [
+        "attention.pdf_5",
+        0.361
+      ]
+    ]
+  },
+  {
+    "question": "What future applications of the Transformer architecture do the authors suggest?",
+    "old_expected_chunks": [
+      "attention.pdf_81"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_30",
+      "attention.pdf_5"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_2",
+      "attention.pdf_21",
+      "attention.pdf_8"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_18",
+      "attention.pdf_24",
+      "attention.pdf_28"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_30",
+        0.461
+      ],
+      [
+        "attention.pdf_2",
+        0.386
+      ],
+      [
+        "attention.pdf_5",
+        0.384
+      ],
+      [
+        "attention.pdf_8",
+        0.377
+      ],
+      [
+        "attention.pdf_21",
+        0.361
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_30",
+        0.439
+      ],
+      [
+        "attention.pdf_18",
+        0.361
+      ],
+      [
+        "attention.pdf_28",
+        0.333
+      ],
+      [
+        "attention.pdf_5",
+        0.33
+      ],
+      [
+        "attention.pdf_24",
+        0.32
+      ]
+    ]
+  },
+  {
+    "question": "What architecture does the Transformer replace in the standard encoder-decoder approach?",
+    "old_expected_chunks": [
+      "attention.pdf_16",
+      "attention.pdf_17",
+      "attention.pdf_79"
+    ],
+    "high_confidence_suggested_chunks": [
+      "attention.pdf_30",
+      "attention.pdf_5",
+      "attention.pdf_8"
+    ],
+    "question_only_candidates": [
+      "attention.pdf_2",
+      "attention.pdf_21"
+    ],
+    "answer_only_candidates": [
+      "attention.pdf_12",
+      "attention.pdf_6"
+    ],
+    "question_top_k": [
+      [
+        "attention.pdf_30",
+        0.466
+      ],
+      [
+        "attention.pdf_8",
+        0.459
+      ],
+      [
+        "attention.pdf_2",
+        0.431
+      ],
+      [
+        "attention.pdf_5",
+        0.415
+      ],
+      [
+        "attention.pdf_21",
+        0.376
+      ]
+    ],
+    "answer_top_k": [
+      [
+        "attention.pdf_30",
+        0.549
+      ],
+      [
+        "attention.pdf_8",
+        0.518
+      ],
+      [
+        "attention.pdf_12",
+        0.518
+      ],
+      [
+        "attention.pdf_6",
+        0.488
+      ],
+      [
+        "attention.pdf_5",
+        0.452
+      ]
+    ]
+  }
+]

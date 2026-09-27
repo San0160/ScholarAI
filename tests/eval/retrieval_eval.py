@@ -1,7 +1,7 @@
 import json
 
 from ai_research_assistant.pipeline.retrieval_pipeline import RetrievalPipeline
-from ai_research_assistant.evaluation.retrival_evaluator import RetrievalEvaluator
+from ai_research_assistant.evaluation.retrieval_evaluator import RetrievalEvaluator
 
 
 QUESTION_FILE = (

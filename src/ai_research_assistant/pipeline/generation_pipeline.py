@@ -119,6 +119,7 @@ class GenerationPipeline:
         return {
             "answer": formatted_answer,
             "raw_answer": raw_answer,
+            "context": context,
             "sources": source_map,
             "citation_matches": citation_matches,
             "citation_validation": citation_validation,
