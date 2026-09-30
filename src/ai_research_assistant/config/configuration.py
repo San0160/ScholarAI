@@ -29,10 +29,13 @@ class ConfigurationManager:
         )
 
     def get_llm_config(self) -> LLMConfig:
+        llm = self.config.llm
         return LLMConfig(
-            provider=self.config.llm.provider,
-            model=self.config.llm.model,
-            device=self.config.llm.device,
-            max_context_tokens=self.config.llm.max_context_tokens,
-            max_new_tokens=self.config.llm.max_new_tokens,
+            provider=llm.provider,
+            model=llm.model,
+            device=llm.get("device", "auto"),
+            max_context_tokens=llm.max_context_tokens,
+            max_new_tokens=llm.max_new_tokens,
+            api_base_url=llm.get("api_base_url"),
+            api_key_env_var=llm.get("api_key_env_var"),
         )

@@ -40,12 +40,12 @@ retrieval:
   candidate_k: 10
 
 llm:
-  provider: huggingface
-  model: Qwen/Qwen2.5-3B-Instruct
-  device: auto
+  provider: api
+  model: openai/gpt-oss-120b
+  api_base_url: https://api.groq.com/openai/v1
+  api_key_env_var: GROQ_API_KEY
   max_context_tokens: 1024
   max_new_tokens: 256
-  n_threads: 4  
 
 reranking:
   provider: cross_encoder

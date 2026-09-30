@@ -27,4 +27,5 @@ class LLMConfig:
     device: str
     max_context_tokens: int
     max_new_tokens: int
-    
+    api_base_url: str = None
+    api_key_env_var: str = None
