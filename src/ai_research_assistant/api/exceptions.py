@@ -23,3 +23,13 @@ async def retrieval_error_handler(request: Request, exc: RetrievalError):
         status_code=500,
         content={"detail": "Retrieval failed. Please try again."}
     )
+
+class IndexingError(Exception):
+    pass
+
+
+async def indexing_error_handler(request: Request, exc: IndexingError):
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Indexing failed. Please try again."}
+    )

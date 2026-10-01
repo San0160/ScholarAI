@@ -6,6 +6,7 @@ from ai_research_assistant.entity.retrieval_result import RetrievalResult
 from ai_research_assistant.retrieval.metadata_filter import MetadataFilter
 from ai_research_assistant.retrieval.vector_retriver import VectorRetriever
 from ai_research_assistant.vector_store.vector_store_factory import VectorStoreFactory
+from ai_research_assistant.api.exceptions import RetrievalError
 
 # from ai_research_assistant.reranking.cross_encoder_reranker import CrossEncoderReranker
 
@@ -63,7 +64,12 @@ class RetrievalPipeline:
         min_score: float | None = None,
     ) -> list[RetrievalResult]:
 
-        candidates = self.retriever.retrieve(query)
+        try:
+            candidates = self.retriever.retrieve(query)
+        except Exception as error:
+            logger.exception("Retrieval failed for query: %r", query)
+            raise RetrievalError("Failed to retrieve documents for this query.") from error
+
         retrieved_count = len(candidates)
 
         candidates = self.metadata_filter.filter(

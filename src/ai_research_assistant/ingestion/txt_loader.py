@@ -1,18 +1,21 @@
+import sys
 from pathlib import Path
 
 from ai_research_assistant.entity.document import Document
+from ai_research_assistant.exception import CustomException
 from ai_research_assistant.ingestion.base_loader import BaseLoader
 
 
 class TxtLoader(BaseLoader):
 
     def load(self, file_path: str) -> list[Document]:
-
         file_path = Path(file_path)
 
-        with open(file_path, "r", encoding="utf-8") as file:
-
-            text = file.read().strip()
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                text = file.read().strip()
+        except Exception as e:
+            raise CustomException(e, sys) from e
 
         if not text:
             return []

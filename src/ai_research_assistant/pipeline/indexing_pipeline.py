@@ -7,6 +7,7 @@ from ai_research_assistant.embeddings.embedding_factory import EmbeddingFactory
 from ai_research_assistant.ingestion.document_loader import DocumentLoader
 from ai_research_assistant.utils.text_cleaner import TextCleaner
 from ai_research_assistant.vector_store.vector_store_factory import VectorStoreFactory
+from ai_research_assistant.api.exceptions import DocumentNotFoundError, IndexingError
 
 logger = logging.getLogger(__name__)
 
@@ -127,28 +128,39 @@ class IndexingPipeline:
 
         logger.info("Starting indexing run for %d file(s)", len(paths_to_process))
 
-        # 1. Load all documents
-        documents = []
+        try:
+            # 1. Load all documents
+            documents = []
 
-        for file_path in paths_to_process:
-            loaded_documents = self.loader.load(file_path)
-            documents.extend(loaded_documents)
+            for file_path in paths_to_process:
+                try:
+                    loaded_documents = self.loader.load(file_path)
+                except FileNotFoundError as error:
+                    raise DocumentNotFoundError(file_path) from error
 
-        # 2. Clean text
-        documents = self.cleaner.clean_documents(documents)
+                documents.extend(loaded_documents)
 
-        # 3. Create chunks
-        chunks = self.chunker.split_documents(documents)
+            # 2. Clean text
+            documents = self.cleaner.clean_documents(documents)
 
-        # 4. Generate embeddings
-        texts = [chunk.page_content for chunk in chunks]
-        embeddings = self.embedder.embed_documents(texts)
+            # 3. Create chunks
+            chunks = self.chunker.split_documents(documents)
 
-        # 5. Add to vector store
-        self.vector_store.add_documents(chunks, embeddings)
+            # 4. Generate embeddings
+            texts = [chunk.page_content for chunk in chunks]
+            embeddings = self.embedder.embed_documents(texts)
 
-        # 6. Persist index
-        self.vector_store.save()
+            # 5. Add to vector store
+            self.vector_store.add_documents(chunks, embeddings)
+
+            # 6. Persist index
+            self.vector_store.save()
+
+        except DocumentNotFoundError:
+            raise
+        except Exception as error:
+            logger.exception("Indexing failed for file(s): %s", paths_to_process)
+            raise IndexingError("Failed to index the given file(s).") from error
 
         logger.info(
             "Indexing run complete: %d file(s) -> %d document(s) -> %d chunk(s) "

@@ -5,6 +5,17 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
+from ai_research_assistant.api.exceptions import (
+    DocumentNotFoundError,
+    document_not_found_handler,
+    RetrievalError,
+    retrieval_error_handler,
+    GenerationError,
+    generation_error_handler,
+    IndexingError,
+    indexing_error_handler,
+)
+from ai_research_assistant.config.configuration import ConfigurationManager
 from ai_research_assistant.embeddings.embedding_factory import EmbeddingFactory
 from ai_research_assistant.pipeline.retrieval_pipeline import RetrievalPipeline
 from ai_research_assistant.pipeline.generation_pipeline import GenerationPipeline
@@ -18,7 +29,8 @@ async def lifespan(app: FastAPI):
 
     logger.info("Loading models and pipelines...")
 
-    embedder = EmbeddingFactory.create_embedding()
+    config_manager = ConfigurationManager()
+    embedder = EmbeddingFactory.create_embedding(config_manager.get_embedding_config())
 
     app.state.embedder = embedder
     app.state.retrieval_pipeline = RetrievalPipeline()
@@ -39,10 +51,16 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.add_exception_handler(DocumentNotFoundError, document_not_found_handler)
+app.add_exception_handler(RetrievalError, retrieval_error_handler)
+app.add_exception_handler(GenerationError, generation_error_handler)
+app.add_exception_handler(IndexingError, indexing_error_handler)
+
 app.include_router(index_router.router, prefix="/api/index", tags=["Indexing"])
 app.include_router(query_router.router, prefix="/api/query", tags=["Querying"])
 
 STATIC_DIR = Path(__file__).parent / "static"
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 @app.get("/", include_in_schema=False)

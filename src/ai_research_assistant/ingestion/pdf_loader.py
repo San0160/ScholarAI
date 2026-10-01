@@ -2,8 +2,10 @@ from pathlib import Path
 import re
 from collections import Counter
 import fitz
+import sys
 
 from ai_research_assistant.entity.document import Document
+from ai_research_assistant.exception.exception import CustomException
 
 
 class PdfLoader:
@@ -22,38 +24,53 @@ class PdfLoader:
 
     def load(self, file_path: str) -> list[Document]:
         file_path = Path(file_path)
-        pdf = fitz.open(file_path)
-        body_font_size = self._estimate_body_font_size(pdf)
 
-        documents = []
-        current_section = None
+        try:
+            pdf = fitz.open(file_path)
+        except Exception as e:
+            raise CustomException(e, sys) from e
 
-        for page_number, page in enumerate(pdf, start=1):
-            lines = self._extract_lines(page)
-            if not lines:
-                continue
+        try:
+            body_font_size = self._estimate_body_font_size(pdf)
 
-            segments = self._segment_by_heading(lines, body_font_size, current_section)
+            documents = []
+            current_section = None
 
-            for section, text in segments:
-                text = text.strip()
-                if not text:
+            for page_number, page in enumerate(pdf, start=1):
+                lines = self._extract_lines(page)
+                if not lines:
                     continue
 
-                current_section = section
+                segments = self._segment_by_heading(lines, body_font_size, current_section)
 
-                metadata = {
-                    "filename": file_path.name,
-                    "file_type": "pdf",
-                    "page": page_number,
-                }
-                if current_section:
-                    metadata["section"] = current_section
+                for section, text in segments:
+                    text = text.strip()
+                    if not text:
+                        continue
 
-                documents.append(Document(page_content=text, metadata=metadata))
+                    current_section = section
 
-        pdf.close()
-        return documents
+                    metadata = {
+                        "filename": file_path.name,
+                        "file_type": "pdf",
+                        "page": page_number,
+                    }
+                    if current_section:
+                        metadata["section"] = current_section
+
+                    documents.append(Document(page_content=text, metadata=metadata))
+
+            if not documents:
+                logger.warning(
+                    "No extractable text found in %s -- it may be a scanned/"
+                    "image-only PDF or password-protected (neither is supported)",
+                    file_path.name,
+                )
+
+            return documents
+
+        finally:
+            pdf.close()
 
     def _estimate_body_font_size(self, pdf) -> float:
         """

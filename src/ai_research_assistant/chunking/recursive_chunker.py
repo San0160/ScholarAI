@@ -85,6 +85,22 @@ class RecursiveChunker(BaseChunker):
 
         return chunks
 
+    def _find_offset(self, needle: str, haystack: str, cursor: int, kind: str) -> int:
+        """text.find() wrapper that falls back to `cursor` (and logs) instead
+        of silently propagating -1 into downstream offset arithmetic."""
+        start = haystack.find(needle, cursor)
+
+        if start == -1:
+            logger.warning(
+                "%s text not found verbatim in source text (possible whitespace/"
+                "punctuation normalization) -- falling back to approximate offset for: %r",
+                kind,
+                needle[:60],
+            )
+            return cursor
+
+        return start
+
     def _split_text(self, text: str) -> list[_TextSpan]:
 
         paragraphs = [
@@ -101,7 +117,7 @@ class RecursiveChunker(BaseChunker):
 
         for paragraph in paragraphs:
 
-            para_start = text.find(paragraph, cursor)
+            para_start = self._find_offset(paragraph, text, cursor, kind="Paragraph")
             para_end = para_start + len(paragraph)
             cursor = para_end
 
@@ -154,7 +170,7 @@ class RecursiveChunker(BaseChunker):
 
         for sentence in sentences:
 
-            sent_start = text.find(sentence, cursor)
+            sent_start = self._find_offset(sentence, text, cursor, kind="Sentence")
             sent_end = sent_start + len(sentence)
             cursor = sent_end
 
@@ -198,7 +214,7 @@ class RecursiveChunker(BaseChunker):
 
         for word in words:
 
-            word_start = text.find(word, cursor)
+            word_start = self._find_offset(word, text, cursor, kind="Word")
             word_end = word_start + len(word)
             cursor = word_end
 
@@ -254,7 +270,6 @@ class RecursiveChunker(BaseChunker):
 
         return result
 
-    
     def _tail_overlap(self, text: str) -> str:
         words = text.split()
 

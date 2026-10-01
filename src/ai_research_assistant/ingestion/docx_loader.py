@@ -1,9 +1,11 @@
 from pathlib import Path
 
 from docx import Document as DocxDocument
+import sys
 
 from ai_research_assistant.entity.document import Document
 from ai_research_assistant.ingestion.base_loader import BaseLoader
+from ai_research_assistant.exception.exception import CustomException
 
 
 class DocxLoader(BaseLoader):
@@ -12,7 +14,10 @@ class DocxLoader(BaseLoader):
 
         file_path = Path(file_path)
 
-        doc = DocxDocument(file_path)
+        try:
+            doc = DocxDocument(file_path)
+        except Exception as e:
+            raise CustomException(e, sys) from e
 
         documents = []
 

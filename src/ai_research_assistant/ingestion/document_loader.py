@@ -16,10 +16,16 @@ class DocumentLoader:
         }
 
     def load(self, file_path: str):
+        path = Path(file_path)
 
-        extension = Path(file_path).suffix.lower()
+        if not path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+
+        extension = path.suffix.lower()
 
         if extension not in self.loaders:
-            raise ValueError(f"Unsupported file type: {extension}")
+            raise ValueError(
+                f"Unsupported file type: {extension}. Allowed: {sorted(self.loaders)}"
+            )
 
         return self.loaders[extension].load(file_path)

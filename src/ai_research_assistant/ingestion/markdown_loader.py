@@ -1,8 +1,9 @@
 from pathlib import Path
-
+import sys
 import re
 
 from ai_research_assistant.entity.document import Document
+from ai_research_assistant.exception import CustomException
 from ai_research_assistant.ingestion.base_loader import BaseLoader
 
 
@@ -12,9 +13,11 @@ class MarkdownLoader(BaseLoader):
 
         file_path = Path(file_path)
 
-        with open(file_path, "r", encoding="utf-8") as file:
-
-            text = file.read()
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                text = file.read()
+        except Exception as e:
+            raise CustomException(e, sys) from e
 
         documents = []
         current_section = None
