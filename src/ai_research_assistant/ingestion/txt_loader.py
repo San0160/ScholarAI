@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 
 from ai_research_assistant.entity.document import Document
-from ai_research_assistant.exception import CustomException
+from ai_research_assistant.exception.exception import CustomException
 from ai_research_assistant.ingestion.base_loader import BaseLoader
 
 

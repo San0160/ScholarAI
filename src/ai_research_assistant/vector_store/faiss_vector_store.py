@@ -9,7 +9,7 @@ import numpy as np
 
 from ai_research_assistant.entity.document import Document
 from ai_research_assistant.entity.retrieval_result import RetrievalResult
-from ai_research_assistant.exception import CustomException
+from ai_research_assistant.exception.exception import CustomException
 from ai_research_assistant.vector_store.base_vector import BaseVectorStore
 
 logger = logging.getLogger(__name__)

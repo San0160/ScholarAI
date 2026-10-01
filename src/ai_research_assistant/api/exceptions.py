@@ -4,10 +4,19 @@ from fastapi.responses import JSONResponse
 
 class DocumentNotFoundError(Exception):
     def __init__(self, file_path: str):
+        super().__init__(f"Document not found: {file_path}")
         self.file_path = file_path
 
 
 class RetrievalError(Exception):
+    pass
+
+
+class GenerationError(Exception):
+    pass
+
+
+class IndexingError(Exception):
     pass
 
 
@@ -24,8 +33,12 @@ async def retrieval_error_handler(request: Request, exc: RetrievalError):
         content={"detail": "Retrieval failed. Please try again."}
     )
 
-class IndexingError(Exception):
-    pass
+
+async def generation_error_handler(request: Request, exc: GenerationError):
+    return JSONResponse(
+        status_code=502,
+        content={"detail": "Answer generation failed. Please try again."}
+    )
 
 
 async def indexing_error_handler(request: Request, exc: IndexingError):

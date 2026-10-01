@@ -36,11 +36,11 @@ class RetrievalPipeline:
 
         try:
             self.vector_store.load()
-        except FileNotFoundError as error:
-            raise RuntimeError(
-                "No vector store found -- run the indexing pipeline before "
-                "starting retrieval"
-            ) from error
+        except FileNotFoundError:
+            logger.info(
+                "No existing vector store found at startup -- retrieval will return "
+                "no results until the indexing pipeline has processed at least one document"
+            )
 
         self.retriever = VectorRetriever(
             embedder=self.embedder,

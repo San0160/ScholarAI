@@ -67,11 +67,6 @@ class HuggingFaceEmbedding(BaseEmbedding):
 
     def _warn_if_truncated(self, texts: list[str]) -> None:
 
-        """sentence-transformers silently truncates any text longer than
-        max_seq_length ***** this surfaces that instead of losing content
-        without a trace.
-        """
-
         max_len = self.model.max_seq_length
 
         over_limit = [
