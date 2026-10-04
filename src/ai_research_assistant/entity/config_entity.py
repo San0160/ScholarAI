@@ -29,3 +29,11 @@ class LLMConfig:
     max_new_tokens: int
     api_base_url: str = None
     api_key_env_var: str = None
+
+@dataclass(frozen=True)
+class RerankingConfig:
+    provider: str
+    model: str
+    top_k: int
+    api_base_url: str = None
+    api_key_env_var: str = None

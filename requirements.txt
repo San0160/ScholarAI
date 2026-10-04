@@ -24,6 +24,7 @@ transformers
 torch
 huggingface_hub[hf_xet]
 openai
+requests
 
 # --- Local package (editable install of ai_research_assistant) ---
 -e .

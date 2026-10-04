@@ -19,8 +19,9 @@ def index_document(
     file: UploadFile = File(...),
     indexing_pipeline: IndexingPipeline = Depends(get_indexing_pipeline),
 ):
+    safe_filename = Path(file.filename).name  # strips any directory components
 
-    extension = Path(file.filename).suffix.lower()
+    extension = Path(safe_filename).suffix.lower()
 
     if extension not in ALLOWED_EXTENSIONS:
         raise HTTPException(
@@ -28,7 +29,7 @@ def index_document(
             detail=f"Unsupported file type: {extension}. Allowed: {sorted(ALLOWED_EXTENSIONS)}"
         )
 
-    destination = UPLOAD_DIR / file.filename
+    destination = UPLOAD_DIR / safe_filename
 
     with destination.open("wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
@@ -36,7 +37,7 @@ def index_document(
     result = indexing_pipeline.run_single(str(destination))
 
     return IndexResponse(
-        filename=file.filename,
+        filename=safe_filename,
         documents=result["documents"],
         chunks=result["chunks"]
     )

@@ -48,6 +48,8 @@ llm:
   max_new_tokens: 1024
 
 reranking:
-  provider: cross_encoder
-  model: BAAI/bge-reranker-v2-m3
+  provider: api  # "api" (NVIDIA NIM hosted) | "cross_encoder" | "bge" -- model field's meaning depends on this
+  model: nvidia/llama-nemotron-rerank-vl-1b-v2
   top_k: 3
+  api_base_url: https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-nemotron-rerank-vl-1b-v2/reranking
+  api_key_env_var: RERANKER_API_KEY

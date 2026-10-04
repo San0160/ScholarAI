@@ -1,11 +1,11 @@
 from ai_research_assistant.utils.common import *
 from ai_research_assistant.constants import *
 from ai_research_assistant.entity.config_entity import ChunkingConfig, EmbeddingConfig
-from ai_research_assistant.entity.config_entity import ChunkingConfig, EmbeddingConfig, LLMConfig
+from ai_research_assistant.entity.config_entity import ChunkingConfig, EmbeddingConfig, LLMConfig, RerankingConfig
 
 class ConfigurationManager:
     def __init__(self, config_filepath = CONFIG_FILE_PATH):     # Access to constants
-        self.config = read_yaml(config_filepath) # read all config and params yaml files
+        self.config = read_yaml(config_filepath)                # read all config and params yaml files
         create_directories([self.config.artifacts_root])
 
     def get_chunking_config(self) -> ChunkingConfig:
@@ -38,4 +38,14 @@ class ConfigurationManager:
             max_new_tokens=llm.max_new_tokens,
             api_base_url=llm.get("api_base_url"),
             api_key_env_var=llm.get("api_key_env_var"),
+        )
+
+    def get_reranking_config(self) -> RerankingConfig:
+        reranking = self.config.reranking
+        return RerankingConfig(
+            provider=reranking.provider,
+            model=reranking.model,
+            top_k=reranking.top_k,
+            api_base_url=reranking.get("api_base_url"),
+            api_key_env_var=reranking.get("api_key_env_var"),
         )

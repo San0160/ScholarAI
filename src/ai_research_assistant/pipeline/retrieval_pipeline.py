@@ -1,29 +1,24 @@
+# pipeline/retrieval_pipeline.py
 import logging
 
+from ai_research_assistant.api.exceptions import RetrievalError
 from ai_research_assistant.config.configuration import ConfigurationManager
 from ai_research_assistant.embeddings.embedding_factory import EmbeddingFactory
 from ai_research_assistant.entity.retrieval_result import RetrievalResult
+from ai_research_assistant.reranking.reranker_factory import RerankerFactory
 from ai_research_assistant.retrieval.metadata_filter import MetadataFilter
 from ai_research_assistant.retrieval.vector_retriver import VectorRetriever
 from ai_research_assistant.vector_store.vector_store_factory import VectorStoreFactory
-from ai_research_assistant.api.exceptions import RetrievalError
-
-# from ai_research_assistant.reranking.cross_encoder_reranker import CrossEncoderReranker
 
 logger = logging.getLogger(__name__)
 
 
 class RetrievalPipeline:
-    """Embeds a query, retrieves candidate chunks from the vector store,
-    and applies metadata filtering. Reranking is not yet wired in (see
-    the commented-out CrossEncoderReranker below), so final_top_k
-    currently truncates by raw cosine similarity, not a reranker score.
-    """
 
     def __init__(self, storage_path: str = None):
 
         config_manager = ConfigurationManager()
-        config = config_manager.config  # raw access for sections without an entity yet
+        config = config_manager.config
 
         self.embedder = EmbeddingFactory.create_embedding(
             config_manager.get_embedding_config()
@@ -50,10 +45,9 @@ class RetrievalPipeline:
 
         self.metadata_filter = MetadataFilter()
 
-        # Reranker disabled for FAISS baseline
-        # self.reranker = CrossEncoderReranker(
-        #     model_name=config.reranking.model
-        # )
+        self.reranker = RerankerFactory.create_reranker(
+            config_manager.get_reranking_config()
+        )
 
         self.final_top_k = config.reranking.top_k
 
@@ -78,11 +72,10 @@ class RetrievalPipeline:
             min_score=min_score,
         )
 
-        # Reranker disabled -- truncating by raw similarity score for now
-        results = candidates[: self.final_top_k]
+        results = self.reranker.rerank(query, candidates, self.final_top_k)
 
         logger.info(
-            "run(): retrieved %d -> %d after filtering -> %d returned",
+            "run(): retrieved %d -> %d after filtering -> %d after reranking",
             retrieved_count, len(candidates), len(results),
         )
 
