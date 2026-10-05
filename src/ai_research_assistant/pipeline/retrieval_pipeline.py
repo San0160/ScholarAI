@@ -56,6 +56,7 @@ class RetrievalPipeline:
         query: str,
         metadata_filters: dict | None = None,
         min_score: float | None = None,
+        top_k: int | None = None,
     ) -> list[RetrievalResult]:
 
         try:
@@ -72,11 +73,12 @@ class RetrievalPipeline:
             min_score=min_score,
         )
 
-        results = self.reranker.rerank(query, candidates, self.final_top_k)
+        effective_top_k = top_k if top_k is not None else self.final_top_k
+        results = self.reranker.rerank(query, candidates, effective_top_k)
 
         logger.info(
-            "run(): retrieved %d -> %d after filtering -> %d after reranking",
-            retrieved_count, len(candidates), len(results),
+            "run(): retrieved %d -> %d after filtering -> %d after reranking (top_k=%d)",
+            retrieved_count, len(candidates), len(results), effective_top_k,
         )
 
         return results

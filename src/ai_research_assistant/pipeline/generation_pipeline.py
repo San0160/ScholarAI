@@ -132,6 +132,7 @@ class GenerationPipeline:
         return {
             "answer": "The information is not available in the provided document.",
             "raw_answer": None,
+            "context": "",
             "sources": {},
             "citation_matches": [],
             "citation_validation": None,

@@ -15,7 +15,11 @@ def query(
     generation_pipeline: GenerationPipeline = Depends(get_generation_pipeline),
 ):
 
-    retrieved_results = retrieval_pipeline.run(request.question)
+    retrieved_results = retrieval_pipeline.run(
+        request.question,
+        metadata_filters=request.metadata_filters,
+        top_k=request.top_k,
+    )
 
     if not retrieved_results:
         raise HTTPException(status_code=404, detail="No relevant documents found.")
@@ -26,8 +30,10 @@ def query(
 
     citations = [
         CitationResponse(
-            source=source["filename"],
-            page=source["page"] if isinstance(source["page"], int) else None
+            source=source.get("filename", "unknown"),
+            page=source.get("page") if isinstance(source.get("page"), int) else None,
+            start_char=source.get("start_char"),
+            end_char=source.get("end_char"),
         )
         for source in result["sources"].values()
     ]

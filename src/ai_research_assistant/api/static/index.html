@@ -24,6 +24,10 @@
             padding: 0.5rem;
             margin: 0.75rem 0;
         }
+        input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
         button {
             padding: 0.5rem 1.2rem;
             cursor: pointer;
@@ -36,7 +40,25 @@
             margin-top: 0.75rem;
             font-size: 0.9rem;
             color: #555;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: 1.2em;
         }
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #ccc;
+            border-top-color: #555;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .status-ok { color: #2a7a2a; }
+        .status-error { color: #b23b3b; }
         #answer-box {
             margin-top: 1rem;
             padding: 1rem;
@@ -65,10 +87,7 @@
 
     <h2>1. Upload a document</h2>
     <section>
-        <form id="upload-form">
-            <input type="file" id="file-input" name="file" accept=".pdf,.docx,.txt,.md" required>
-            <button type="submit" id="upload-btn">Upload &amp; Index</button>
-        </form>
+        <input type="file" id="file-input" name="file" accept=".pdf,.docx,.txt,.md">
         <div id="upload-status"></div>
     </section>
 
@@ -87,20 +106,26 @@
     </section>
 
     <script>
-        // ---------- Upload ----------
-        const uploadForm = document.getElementById("upload-form");
+        // ---------- Upload (fires automatically on file selection) ----------
+        const fileInput = document.getElementById("file-input");
         const uploadStatus = document.getElementById("upload-status");
-        const uploadBtn = document.getElementById("upload-btn");
 
-        uploadForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
+        function setUploadStatus(message, { spinner = false, variant = "" } = {}) {
+            uploadStatus.className = variant ? `status-${variant}` : "";
+            uploadStatus.innerHTML = spinner
+                ? `<span class="spinner"></span><span>${message}</span>`
+                : `<span>${message}</span>`;
+        }
 
-            const fileInput = document.getElementById("file-input");
+        fileInput.addEventListener("change", async () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            fileInput.disabled = true;
+            setUploadStatus(`Uploading and indexing "${file.name}"...`, { spinner: true });
+
             const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-
-            uploadBtn.disabled = true;
-            uploadStatus.textContent = "Uploading and indexing...";
+            formData.append("file", file);
 
             try {
                 const response = await fetch("/api/index", {
@@ -110,18 +135,21 @@
 
                 if (!response.ok) {
                     const error = await response.json();
-                    uploadStatus.textContent = "Error: " + error.detail;
+                    setUploadStatus("Error: " + error.detail, { variant: "error" });
                     return;
                 }
 
                 const result = await response.json();
-                uploadStatus.textContent =
-                    `Indexed "${result.filename}" — ${result.documents} document(s), ${result.chunks} chunk(s).`;
+                setUploadStatus(
+                    `Indexed "${result.filename}" — ${result.documents} document(s), ${result.chunks} chunk(s).`,
+                    { variant: "ok" }
+                );
 
             } catch (err) {
-                uploadStatus.textContent = "Upload failed: " + err.message;
+                setUploadStatus("Upload failed: " + err.message, { variant: "error" });
             } finally {
-                uploadBtn.disabled = false;
+                fileInput.disabled = false;
+                fileInput.value = ""; // lets the same file be re-selected (and re-trigger "change") later
             }
         });
 
@@ -140,7 +168,7 @@
             if (!question) return;
 
             queryBtn.disabled = true;
-            queryStatus.textContent = "Thinking...";
+            queryStatus.innerHTML = `<span class="spinner"></span><span>Thinking...</span>`;
             answerBox.style.display = "none";
 
             try {

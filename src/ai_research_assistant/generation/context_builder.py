@@ -58,7 +58,9 @@ class ContextBuilder:
             source_map[source_id] = {
                 "chunk_id": document.metadata.get("chunk_id"),
                 "filename": filename,
-                "page": page
+                "page": page,
+                "start_char": document.metadata.get("start_char"),
+                "end_char": document.metadata.get("end_char"),
             }
             
             used_tokens += part_tokens
