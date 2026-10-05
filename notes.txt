@@ -1,0 +1,8 @@
+1) Get groq paid version to add chat history chat memory and high end chatbot
+
+2) Headings are removed from the text
+When a line is detected as a heading, it is stored (lowercased) in the section metadata and then dropped from the page text.
+Nothing downstream uses section. So a heading like "1. Audit of Existing Projects & Improvement Areas" is never embedded
+and never shown to the model.
+3) There is a second risk in the same place. Any short line that contains bold text and starts with a capital letter counts
+as a heading, so a short bold line of body text would be dropped too

@@ -82,3 +82,6 @@ class RetrievalPipeline:
         )
 
         return results
+
+    def get_document_chunks(self, metadata_filters: dict) -> list:
+        return self.vector_store.get_documents(metadata_filters)

@@ -6,6 +6,7 @@ import sys
 
 from ai_research_assistant.entity.document import Document
 from ai_research_assistant.exception.exception import CustomException
+from ai_research_assistant.logging.logger import logger
 
 
 class PdfLoader:
@@ -102,7 +103,7 @@ class PdfLoader:
         lines = []
         raw = page.get_text("dict")
 
-        for block in raw.get("blocks", []):
+        for block_index, block in enumerate(raw.get("blocks", [])):
             for line in block.get("lines", []):
 
                 spans = line.get("spans", [])
@@ -124,7 +125,8 @@ class PdfLoader:
                 lines.append({
                     "text": text,
                     "size": max_size,
-                    "bold": is_bold
+                    "bold": is_bold,
+                    "block": block_index,
                 })
 
         return lines
@@ -179,7 +181,7 @@ class PdfLoader:
     ) -> list[tuple[str | None, str]]:
 
         segments = []
-        buffer = []
+        buffer = []          # (text, block index) pairs
         section = current_section
 
         for line in lines:
@@ -187,15 +189,25 @@ class PdfLoader:
             if self._is_heading(line, body_size):
 
                 if buffer:
-                    segments.append((section, "\n".join(buffer)))
+                    segments.append((section, self._join_lines(buffer)))
                     buffer = []
 
                 section = self._clean_heading_text(line["text"])
                 continue
 
-            buffer.append(line["text"])
+            buffer.append((line["text"], line["block"]))
 
         if buffer:
-            segments.append((section, "\n".join(buffer)))
+            segments.append((section, self._join_lines(buffer)))
 
         return segments
+
+    @staticmethod
+    def _join_lines(buffer: list[tuple[str, int]]) -> str:
+        """Lines of one block are joined with a newline; a new block starts
+        after a blank line, so the chunker can see paragraph boundaries."""
+        parts = [buffer[0][0]]
+        for (text, block), (_, previous_block) in zip(buffer[1:], buffer):
+            parts.append("\n\n" if block != previous_block else "\n")
+            parts.append(text)
+        return "".join(parts)

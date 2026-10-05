@@ -2,208 +2,795 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ScholarAI</title>
     <style>
+        :root {
+            /* Drop your image at static/background.jpg, or change this one line. */
+            --bg-image: url("/static/background.jpg");
+
+            --bg: #090c13;
+            --panel: rgba(16, 20, 30, 0.58);
+            --card: rgba(255, 255, 255, 0.045);
+            --border: rgba(255, 255, 255, 0.13);
+            --text: #e9ecf3;
+            --muted: #9aa3b6;
+            --accent: #7aa5ff;
+            --accent-strong: #5b8cff;
+            --ok: #6fd6a0;
+            --error: #ff8f8f;
+            --radius: 18px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { height: 100%; }
+
         body {
-            font-family: sans-serif;
-            max-width: 640px;
-            margin: 60px auto;
-            padding: 0 20px;
+            margin: 0;
+            font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+            color: var(--text);
+            background-color: var(--bg);
+            background-image:
+                linear-gradient(rgba(6, 8, 14, 0.62), rgba(6, 8, 14, 0.78)),
+                var(--bg-image);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            padding: 22px 28px 28px;
+            gap: 18px;
         }
-        h1 { font-size: 1.5rem; }
-        h2 { font-size: 1.1rem; margin-top: 3rem; }
-        section {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-top: 1rem;
+
+        /* ---------- Header ---------- */
+        .app-header h1 {
+            margin: 0;
+            font-size: 1.9rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
-        input[type="file"], input[type="text"] {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 0.5rem;
-            margin: 0.75rem 0;
+        .app-header p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 0.95rem;
         }
-        input:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+
+        /* ---------- Layout ---------- */
+        .workspace {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 22px;
         }
-        button {
-            padding: 0.5rem 1.2rem;
+
+        .panel {
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 18px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            -webkit-backdrop-filter: blur(14px) saturate(120%);
+            backdrop-filter: blur(14px) saturate(120%);
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+
+        h2 {
+            margin: 0 0 10px;
+            font-size: 1.05rem;
+            font-weight: 650;
+        }
+
+        .hint {
+            margin: 8px 0 0;
+            font-size: 0.82rem;
+            color: var(--muted);
+            overflow-wrap: anywhere;
+        }
+
+        /* ---------- Buttons and inputs ---------- */
+        button, .file-button {
+            font: inherit;
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 8px 14px;
             cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        button:hover:not(:disabled), .file-button:hover {
+            background: rgba(255, 255, 255, 0.14);
         }
         button:disabled {
+            opacity: 0.45;
             cursor: not-allowed;
-            opacity: 0.6;
         }
-        #upload-status, #query-status {
-            margin-top: 0.75rem;
-            font-size: 0.9rem;
-            color: #555;
+        button.primary {
+            background: var(--accent-strong);
+            border-color: transparent;
+            color: #fff;
+            font-weight: 600;
+        }
+        button.primary:hover:not(:disabled) { background: var(--accent); }
+
+        button:focus-visible, .file-button:focus-within, input:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* File picker: the native input is visually hidden but still focusable. */
+        .file-row {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            min-height: 1.2em;
+            gap: 12px;
+            min-width: 0;
         }
+        .file-button { position: relative; flex-shrink: 0; }
+        .file-button input {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-button.is-disabled { opacity: 0.45; pointer-events: none; }
+        #file-name {
+            color: var(--muted);
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ---------- Upload status ---------- */
+        #upload-status { font-size: 0.9rem; }
+        #upload-status .status-title { font-size: 1rem; margin-bottom: 4px; }
+        #upload-status .status-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            overflow-wrap: anywhere;
+        }
+        #upload-status.is-ok .status-line { color: var(--ok); }
+        #upload-status.is-error .status-line { color: var(--error); }
+        .status-actions { display: flex; gap: 8px; margin-top: 10px; }
+
         .spinner {
             width: 14px;
             height: 14px;
-            border: 2px solid #ccc;
-            border-top-color: #555;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-top-color: var(--text);
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
             flex-shrink: 0;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ---------- Preview ---------- */
+        .preview {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: box-shadow 0.25s, border-color 0.25s;
         }
-        .status-ok { color: #2a7a2a; }
-        .status-error { color: #b23b3b; }
-        #answer-box {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: #f7f7f7;
-            border-radius: 6px;
-            display: none;
+        .preview.flash {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(122, 165, 255, 0.35);
+        }
+        .preview-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88rem;
+            color: var(--muted);
+        }
+        .preview-toolbar button { padding: 4px 12px; }
+        .preview-body {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .preview-body canvas {
+            display: block;
+            border-radius: 4px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+        }
+        .preview-body pre {
+            margin: 0;
+            width: 100%;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-family: Consolas, "Cascadia Mono", Menlo, monospace;
+            font-size: 0.85rem;
+            line-height: 1.55;
+            color: var(--text);
+        }
+        .placeholder {
+            margin: auto;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.95rem;
+            max-width: 320px;
+            line-height: 1.5;
+        }
+
+        /* ---------- Question panel ---------- */
+        #query-form { display: flex; gap: 10px; }
+        #question-input {
+            flex: 1;
+            min-width: 0;
+            font: inherit;
+            color: var(--text);
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 14px;
+        }
+        #question-input::placeholder { color: #7c8598; }
+        #question-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .answer {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
         }
         #answer-text {
             white-space: pre-wrap;
-            line-height: 1.5;
+            overflow-wrap: anywhere;
+            line-height: 1.6;
+            font-size: 0.97rem;
         }
-        .citations {
-            margin-top: 1rem;
-            font-size: 0.85rem;
-            color: #444;
+        #answer-text.is-error { color: var(--error); }
+        .answer .status-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            align-self: flex-start;
         }
-        .citations ul {
-            padding-left: 1.2rem;
-            margin: 0.3rem 0 0 0;
+
+        .citations { font-size: 0.88rem; }
+        .citations-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .citations-head span { color: var(--muted); }
+        #citations-list {
+            list-style: none;
+            margin: 12px 0 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 120px;
+            overflow: auto;
+        }
+        #citations-list button { padding: 5px 11px; font-size: 0.85rem; }
+        #citations-list button.link { color: var(--accent); }
+        #citations-list .plain {
+            display: inline-block;
+            padding: 5px 11px;
+            border: 1px dashed var(--border);
+            border-radius: 9px;
+            color: var(--muted);
+        }
+
+        [hidden] { display: none !important; }
+
+        /* ---------- Narrow screens: stack the panels ---------- */
+        @media (max-width: 900px) {
+            html, body { height: auto; }
+            body { padding: 16px; }
+            .workspace { grid-template-columns: 1fr; }
+            .preview { min-height: 420px; }
+            .answer { min-height: 220px; }
         }
     </style>
 </head>
 <body>
 
-    <h1>ScholarAI</h1>
+    <header class="app-header">
+        <h1>ScholarAI</h1>
+        <p>Ask questions about your document and trace every answer back to the page.</p>
+    </header>
 
-    <h2>1. Upload a document</h2>
-    <section>
-        <input type="file" id="file-input" name="file" accept=".pdf,.docx,.txt,.md">
-        <div id="upload-status"></div>
-    </section>
+    <main class="workspace">
 
-    <h2>2. Ask a question</h2>
-    <section>
-        <form id="query-form">
-            <input type="text" id="question-input" placeholder="What optimization algorithm was used?" required>
-            <button type="submit" id="query-btn">Ask</button>
-        </form>
-        <div id="query-status"></div>
+        <!-- ================= Left: document ================= -->
+        <section class="panel" aria-label="Document">
+            <div class="card">
+                <h2>Upload a document</h2>
+                <div class="file-row">
+                    <label class="file-button" id="file-button">
+                        Choose file
+                        <input type="file" id="file-input" accept=".pdf,.docx,.txt,.md">
+                    </label>
+                    <span id="file-name">No file chosen</span>
+                </div>
+                <p class="hint">PDF, DOCX, TXT or MD. Indexing starts as soon as you pick a file.</p>
+            </div>
 
-        <div id="answer-box">
-            <div id="answer-text"></div>
-            <div class="citations" id="citations-box"></div>
-        </div>
-    </section>
+            <div class="card" id="upload-status" role="status" hidden></div>
 
+            <div class="preview" id="preview">
+                <div class="preview-toolbar" id="preview-toolbar" hidden>
+                    <button type="button" id="prev-page" aria-label="Previous page">&#8249; Prev</button>
+                    <span id="page-label">Page 1 of 1</span>
+                    <button type="button" id="next-page" aria-label="Next page">Next &#8250;</button>
+                </div>
+                <div class="preview-body" id="preview-body">
+                    <p class="placeholder">Your document preview will appear here once it has been uploaded and indexed.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= Right: questions ================= -->
+        <section class="panel" aria-label="Questions">
+            <div class="card">
+                <h2>Ask a question</h2>
+                <p class="hint" id="qa-hint" style="margin-top:0">Upload a document first. Questions unlock once it is indexed.</p>
+            </div>
+
+            <form id="query-form">
+                <input type="text" id="question-input" placeholder="Upload a document to begin"
+                       aria-label="Your question" autocomplete="off" maxlength="2000" disabled>
+                <button type="submit" class="primary" id="query-btn" disabled>Ask</button>
+            </form>
+
+            <div class="answer" id="answer" aria-live="polite">
+                <p class="placeholder" id="answer-placeholder">Answers will appear here.</p>
+                <div id="answer-text" hidden></div>
+            </div>
+
+            <div class="card citations" id="citations" hidden>
+                <div class="citations-head">
+                    <span id="citations-summary"></span>
+                    <button type="button" id="citations-toggle" aria-expanded="false" aria-controls="citations-list">Show citations</button>
+                </div>
+                <ul id="citations-list" hidden></ul>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PDF.js renders the preview and lets citations jump to a page. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
-        // ---------- Upload (fires automatically on file selection) ----------
-        const fileInput = document.getElementById("file-input");
-        const uploadStatus = document.getElementById("upload-status");
+        const PDF_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        const TEXT_PREVIEW_LIMIT = 200000; // characters shown for .txt / .md
 
-        function setUploadStatus(message, { spinner = false, variant = "" } = {}) {
-            uploadStatus.className = variant ? `status-${variant}` : "";
-            uploadStatus.innerHTML = spinner
-                ? `<span class="spinner"></span><span>${message}</span>`
-                : `<span>${message}</span>`;
+        // ---------- State ----------
+        let activeDocument = null;   // filename of the one indexed document questions are scoped to
+        let pdfDoc = null;           // PDF.js document when the active file is a PDF
+        let currentPage = 1;
+        let renderTask = null;
+        let renderSeq = 0;
+
+        // ---------- Elements ----------
+        const $ = (id) => document.getElementById(id);
+        const fileInput = $("file-input");
+        const fileButton = $("file-button");
+        const fileName = $("file-name");
+        const uploadStatus = $("upload-status");
+        const preview = $("preview");
+        const previewToolbar = $("preview-toolbar");
+        const previewBody = $("preview-body");
+        const pageLabel = $("page-label");
+        const prevBtn = $("prev-page");
+        const nextBtn = $("next-page");
+        const qaHint = $("qa-hint");
+        const queryForm = $("query-form");
+        const questionInput = $("question-input");
+        const queryBtn = $("query-btn");
+        const answerBox = $("answer");
+        const answerPlaceholder = $("answer-placeholder");
+        const answerText = $("answer-text");
+        const citationsCard = $("citations");
+        const citationsSummary = $("citations-summary");
+        const citationsToggle = $("citations-toggle");
+        const citationsList = $("citations-list");
+
+        // ---------- Small helpers ----------
+        // Text always goes in through textContent, so a filename or answer is never parsed as HTML.
+        function el(tag, className, text) {
+            const node = document.createElement(tag);
+            if (className) node.className = className;
+            if (text !== undefined) node.textContent = text;
+            return node;
+        }
+
+        function extensionOf(name) {
+            const dot = name.lastIndexOf(".");
+            return dot === -1 ? "" : name.slice(dot + 1).toLowerCase();
+        }
+
+        // FastAPI errors are {"detail": "..."}; validation errors make detail a list.
+        async function readError(response) {
+            try {
+                const data = await response.json();
+                if (typeof data.detail === "string") return data.detail;
+                if (Array.isArray(data.detail)) return data.detail.map(d => d.msg).join("; ");
+            } catch (_) { /* not JSON */ }
+            return `Request failed (${response.status})`;
+        }
+
+        // ---------- Upload status card ----------
+        function showStatus({ title, message, variant = "", spinner = false, actions = [] }) {
+            uploadStatus.hidden = false;
+            uploadStatus.className = "card" + (variant ? ` is-${variant}` : "");
+            uploadStatus.replaceChildren();
+
+            if (title) uploadStatus.append(title);
+
+            const line = el("div", "status-line");
+            if (spinner) line.append(el("span", "spinner"));
+            line.append(el("span", "", message));
+            uploadStatus.append(line);
+
+            if (actions.length) {
+                const row = el("div", "status-actions");
+                actions.forEach(a => row.append(a));
+                uploadStatus.append(row);
+            }
+        }
+
+        function fileTypeTitle(name) {
+            const title = el("div", "status-title");
+            title.append("Uploaded file type is ", el("strong", "", extensionOf(name).toUpperCase() || "UNKNOWN"));
+            return title;
+        }
+
+        // Asks the user, inside the status card, what to do with an already indexed file.
+        function askReindex(name) {
+            return new Promise((resolve) => {
+                const reindex = el("button", "primary", "Re-index");
+                const keep = el("button", "", "Use existing");
+                reindex.type = keep.type = "button";
+                reindex.onclick = () => resolve(true);
+                keep.onclick = () => resolve(false);
+                showStatus({
+                    title: fileTypeTitle(name),
+                    message: `"${name}" is already indexed. Re-index it, or keep the existing index?`,
+                    actions: [reindex, keep],
+                });
+            });
+        }
+
+        function setUploadBusy(busy) {
+            fileInput.disabled = busy;
+            fileButton.classList.toggle("is-disabled", busy);
+        }
+
+        // ---------- Upload + index (fires on file selection) ----------
+        function postFile(file, rebuild) {
+            const formData = new FormData();
+            formData.append("file", file);
+            if (rebuild) formData.append("rebuild", "true");
+            return fetch("/api/index", { method: "POST", body: formData });
         }
 
         fileInput.addEventListener("change", async () => {
             const file = fileInput.files[0];
             if (!file) return;
 
-            fileInput.disabled = true;
-            setUploadStatus(`Uploading and indexing "${file.name}"...`, { spinner: true });
-
-            const formData = new FormData();
-            formData.append("file", file);
+            fileName.textContent = file.name;
+            setUploadBusy(true);
+            setQuestionsEnabled(false);
+            showStatus({ title: fileTypeTitle(file.name), message: `Uploading and indexing "${file.name}"...`, spinner: true });
 
             try {
-                const response = await fetch("/api/index", {
-                    method: "POST",
-                    body: formData
-                });
+                let response = await postFile(file, false);
+                let indexedName = file.name;
+                let summary = null;
 
-                if (!response.ok) {
-                    const error = await response.json();
-                    setUploadStatus("Error: " + error.detail, { variant: "error" });
-                    return;
+                if (response.status === 409) {
+                    const reindex = await askReindex(file.name);
+                    if (reindex) {
+                        showStatus({ title: fileTypeTitle(file.name), message: `Re-indexing "${file.name}"...`, spinner: true });
+                        response = await postFile(file, true);
+                    } else {
+                        response = null;
+                        summary = `Using the existing index for "${file.name}".`;
+                    }
                 }
 
-                const result = await response.json();
-                setUploadStatus(
-                    `Indexed "${result.filename}" — ${result.documents} document(s), ${result.chunks} chunk(s).`,
-                    { variant: "ok" }
-                );
+                if (response) {
+                    if (!response.ok) {
+                        showStatus({ title: fileTypeTitle(file.name), message: "Error: " + await readError(response), variant: "error" });
+                        return;
+                    }
+                    const result = await response.json();
+                    indexedName = result.filename;
+                    summary = `Indexed "${result.filename}" — ${result.documents} document(s), ${result.chunks} chunk(s).`;
+                }
+
+                // One document at a time: the new file replaces the old one everywhere.
+                activeDocument = indexedName;
+                resetAnswer();
+                showStatus({ title: fileTypeTitle(file.name), message: summary, variant: "ok" });
+                await showPreview(file);
 
             } catch (err) {
-                setUploadStatus("Upload failed: " + err.message, { variant: "error" });
+                showStatus({ title: fileTypeTitle(file.name), message: "Upload failed: " + err.message, variant: "error" });
             } finally {
-                fileInput.disabled = false;
-                fileInput.value = ""; // lets the same file be re-selected (and re-trigger "change") later
+                setUploadBusy(false);
+                fileInput.value = "";                          // lets the same file be picked again later
+                setQuestionsEnabled(activeDocument !== null);  // stays off until something is indexed
             }
         });
 
-        // ---------- Query ----------
-        const queryForm = document.getElementById("query-form");
-        const queryStatus = document.getElementById("query-status");
-        const queryBtn = document.getElementById("query-btn");
-        const answerBox = document.getElementById("answer-box");
-        const answerText = document.getElementById("answer-text");
-        const citationsBox = document.getElementById("citations-box");
+        // ---------- Preview ----------
+        function setPlaceholder(message) {
+            previewToolbar.hidden = true;
+            previewBody.replaceChildren(el("p", "placeholder", message));
+        }
+
+        async function showPreview(file) {
+            pdfDoc = null;
+            currentPage = 1;
+            renderSeq++; // abandon any render still in flight for the previous document
+            const ext = extensionOf(file.name);
+
+            if (ext === "pdf") {
+                if (!window.pdfjsLib) {
+                    setPlaceholder("The PDF viewer could not be loaded (it needs an internet connection). Your document is still indexed and ready for questions.");
+                    return;
+                }
+                try {
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
+                    pdfDoc = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+                    previewBody.replaceChildren(el("canvas"));
+                    previewToolbar.hidden = false;
+                    await renderPage(1);
+                } catch (err) {
+                    pdfDoc = null;
+                    setPlaceholder("This PDF could not be previewed: " + err.message);
+                }
+                return;
+            }
+
+            if (ext === "txt" || ext === "md") {
+                const text = await file.text();
+                const pre = el("pre", "", text.slice(0, TEXT_PREVIEW_LIMIT));
+                if (text.length > TEXT_PREVIEW_LIMIT) {
+                    pre.append("\n\n[Preview truncated. The full document is indexed.]");
+                }
+                previewToolbar.hidden = true;
+                previewBody.replaceChildren(pre);
+                return;
+            }
+
+            setPlaceholder("Coming soon. Preview is only available for PDF.");
+        }
+
+        async function renderPage(pageNumber) {
+            if (!pdfDoc) return;
+            currentPage = Math.min(Math.max(1, pageNumber), pdfDoc.numPages);
+            pageLabel.textContent = `Page ${currentPage} of ${pdfDoc.numPages}`;
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= pdfDoc.numPages;
+
+            const seq = ++renderSeq;
+            const doc = pdfDoc;
+
+            // PDF.js cannot draw twice on one canvas at once, so stop any render in flight.
+            if (renderTask) {
+                renderTask.cancel();
+                try { await renderTask.promise; } catch (_) { /* cancelled */ }
+            }
+            const page = await doc.getPage(currentPage);
+            if (seq !== renderSeq || doc !== pdfDoc) return; // a newer request superseded this one
+
+            const canvas = previewBody.querySelector("canvas");
+            if (!canvas) return;
+
+            // Fit the page to the panel width, rendering at device resolution so text stays sharp.
+            const available = Math.max(200, previewBody.clientWidth - 28);
+            const scale = available / page.getViewport({ scale: 1 }).width;
+            const ratio = window.devicePixelRatio || 1;
+            const viewport = page.getViewport({ scale: scale * ratio });
+
+            canvas.width = Math.floor(viewport.width);
+            canvas.height = Math.floor(viewport.height);
+            canvas.style.width = Math.floor(viewport.width / ratio) + "px";
+            canvas.style.height = Math.floor(viewport.height / ratio) + "px";
+
+            const task = page.render({ canvasContext: canvas.getContext("2d"), viewport });
+            renderTask = task;
+            try {
+                await task.promise;
+            } catch (err) {
+                if (err && err.name !== "RenderingCancelledException") throw err;
+            } finally {
+                if (renderTask === task) renderTask = null;
+            }
+            previewBody.scrollTop = 0;
+        }
+
+        prevBtn.addEventListener("click", () => renderPage(currentPage - 1));
+        nextBtn.addEventListener("click", () => renderPage(currentPage + 1));
+
+        let resizeTimer = null;
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => renderPage(currentPage), 150);
+        });
+
+        // Called when a citation is clicked.
+        async function goToPage(pageNumber) {
+            if (!pdfDoc) return;
+            await renderPage(pageNumber);
+            preview.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            preview.classList.add("flash");
+            setTimeout(() => preview.classList.remove("flash"), 900);
+        }
+
+        // ---------- Questions ----------
+        function setQuestionsEnabled(enabled) {
+            questionInput.disabled = !enabled;
+            queryBtn.disabled = !enabled;
+            questionInput.placeholder = enabled
+                ? "Ask something about this document"
+                : "Upload a document to begin";
+            qaHint.textContent = activeDocument
+                ? `Answers are drawn only from "${activeDocument}".`
+                : "Upload a document first. Questions unlock once it is indexed.";
+        }
+
+        function clearThinking() {
+            answerBox.querySelectorAll(".status-line").forEach(n => n.remove());
+        }
+
+        function resetAnswer() {
+            clearThinking();
+            answerText.hidden = true;
+            answerText.classList.remove("is-error");
+            answerText.replaceChildren();
+            answerPlaceholder.hidden = false;
+            citationsCard.hidden = true;
+            questionInput.value = "";
+        }
+
+        // Shows **bold** from the model as real bold. Everything else stays plain text,
+        // so nothing in the answer is ever interpreted as HTML.
+        function renderAnswer(text) {
+            answerText.replaceChildren();
+            text.split(/\*\*(.+?)\*\*/g).forEach((part, i) => {
+                if (!part) return;
+                answerText.append(i % 2 === 1 ? el("strong", "", part) : part);
+            });
+        }
+
+        function showAnswerMessage(message, isError) {
+            clearThinking();
+            answerPlaceholder.hidden = true;
+            answerText.hidden = false;
+            answerText.classList.toggle("is-error", Boolean(isError));
+            if (isError) answerText.textContent = message; else renderAnswer(message);
+        }
+
+        function setCitationsOpen(open) {
+            citationsList.hidden = !open;
+            citationsToggle.textContent = open ? "Hide citations" : "Show citations";
+            citationsToggle.setAttribute("aria-expanded", String(open));
+        }
+
+        function renderCitations(citations) {
+            // Several chunks can come from the same page; show each page once.
+            const seen = new Set();
+            const unique = (citations || []).filter(c => {
+                const key = `${c.source}|${c.page}`;
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+
+            citationsList.replaceChildren();
+            setCitationsOpen(false); // hidden by default on every new answer
+
+            if (!unique.length) {
+                citationsCard.hidden = true;
+                return;
+            }
+
+            unique.forEach(c => {
+                const hasPage = Number.isInteger(c.page);
+                const label = hasPage ? `${c.source}, p. ${c.page}` : c.source;
+                const item = el("li");
+                const canJump = hasPage && pdfDoc && c.source === activeDocument
+                    && c.page >= 1 && c.page <= pdfDoc.numPages;
+
+                if (canJump) {
+                    const button = el("button", "link", label);
+                    button.type = "button";
+                    button.title = `Show page ${c.page} in the preview`;
+                    button.addEventListener("click", () => goToPage(c.page));
+                    item.append(button);
+                } else {
+                    item.append(el("span", "plain", label));
+                }
+                citationsList.append(item);
+            });
+
+            citationsSummary.textContent = unique.length === 1 ? "1 source" : `${unique.length} sources`;
+            citationsCard.hidden = false;
+        }
+
+        citationsToggle.addEventListener("click", () => setCitationsOpen(citationsList.hidden));
 
         queryForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            const question = document.getElementById("question-input").value.trim();
-            if (!question) return;
+            const question = questionInput.value.trim();
+            if (!question || !activeDocument) return;
 
             queryBtn.disabled = true;
-            queryStatus.innerHTML = `<span class="spinner"></span><span>Thinking...</span>`;
-            answerBox.style.display = "none";
+            questionInput.disabled = true;
+            citationsCard.hidden = true;
+            answerPlaceholder.hidden = true;
+            answerText.hidden = true;
+            clearThinking();
+            const thinking = el("div", "status-line");
+            thinking.append(el("span", "spinner"), el("span", "", "Thinking..."));
+            answerBox.append(thinking);
 
             try {
                 const response = await fetch("/api/query", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ question })
+                    body: JSON.stringify({
+                        question,
+                        metadata_filters: { filename: activeDocument }
+                    })
                 });
 
                 if (!response.ok) {
-                    const error = await response.json();
-                    queryStatus.textContent = "Error: " + error.detail;
+                    showAnswerMessage(await readError(response), true);
                     return;
                 }
 
                 const result = await response.json();
-
-                answerText.textContent = result.answer;
-
-                if (result.citations && result.citations.length > 0) {
-                    const items = result.citations
-                        .map(c => `<li>${c.source}${c.page !== null ? ", p. " + c.page : ""}</li>`)
-                        .join("");
-                    citationsBox.innerHTML = `<strong>Sources:</strong><ul>${items}</ul>`;
-                } else {
-                    citationsBox.innerHTML = "";
-                }
-
-                answerBox.style.display = "block";
-                queryStatus.textContent = "";
+                showAnswerMessage(result.answer, false);
+                renderCitations(result.citations);
 
             } catch (err) {
-                queryStatus.textContent = "Query failed: " + err.message;
+                showAnswerMessage("Query failed: " + err.message, true);
             } finally {
                 queryBtn.disabled = false;
+                questionInput.disabled = false;
+                questionInput.focus();
             }
         });
     </script>

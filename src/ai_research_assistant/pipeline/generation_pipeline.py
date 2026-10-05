@@ -139,3 +139,6 @@ class GenerationPipeline:
             "raw_citation_validation": None,
             "citation_status": _CITATION_SKIPPED,
         }
+
+    def select_overview_documents(self, documents) -> list:
+        return self.context_builder.select_for_overview(documents)

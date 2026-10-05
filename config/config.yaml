@@ -44,12 +44,12 @@ llm:
   model: openai/gpt-oss-120b
   api_base_url: https://api.groq.com/openai/v1
   api_key_env_var: GROQ_API_KEY
-  max_context_tokens: 8192
+  max_context_tokens: 6500
   max_new_tokens: 1024
 
 reranking:
   provider: api  # "api" (NVIDIA NIM hosted) | "cross_encoder" | "bge" -- model field's meaning depends on this
   model: nvidia/llama-nemotron-rerank-vl-1b-v2
-  top_k: 3
+  top_k: 8
   api_base_url: https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-nemotron-rerank-vl-1b-v2/reranking
   api_key_env_var: RERANKER_API_KEY

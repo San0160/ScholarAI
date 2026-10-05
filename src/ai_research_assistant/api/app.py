@@ -30,26 +30,28 @@ from ai_research_assistant.logging.logger import logger
 
 load_dotenv()
 
-def _reset_data_on_startup():
-    logger.warning("RESET_ON_STARTUP is set -- wiping raw uploads and vector store for a clean start")
-
-    if RAW_DATA_PATH.exists():
-        shutil.rmtree(RAW_DATA_PATH)
-    RAW_DATA_PATH.mkdir(parents=True, exist_ok=True)
-
-    if VECTOR_DB_PATH.exists():
-        shutil.rmtree(VECTOR_DB_PATH)
-    VECTOR_DB_PATH.mkdir(parents=True, exist_ok=True)
+def _clear_directory(path: Path) -> None:
+    path.mkdir(parents=True, exist_ok=True)
+    for entry in path.iterdir():
+        if entry.name == ".gitkeep":
+            continue
+        if entry.is_dir():
+            shutil.rmtree(entry)
+        else:
+            entry.unlink()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
     logger.info("Loading models and pipelines...")
 
-    if os.environ.get("RESET_ON_STARTUP", "false").lower() == "true":
-        _reset_data_on_startup()
-
     config_manager = ConfigurationManager()
+
+    _clear_directory(RAW_DATA_PATH)
+    _clear_directory(Path(config_manager.config.vector_store.path))
+    logger.info("Cleared previous uploads and vector store -- starting with an empty index")
+
+    
     embedder = EmbeddingFactory.create_embedding(config_manager.get_embedding_config())
 
     app.state.embedder = embedder

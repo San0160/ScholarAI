@@ -2,6 +2,14 @@ import re
 
 from ai_research_assistant.entity.document import Document
 
+# Reference markers left in ChatGPT exports, e.g. 【2†L162-L170】. They can wrap
+# across a line break in extracted PDF text. Requiring the digit and dagger keeps
+# ordinary 【 】 brackets in Chinese or Japanese text untouched. A space left
+# stranded before punctuation by the removal is taken out with the marker.
+_EXPORT_MARKER_PATTERN = re.compile(
+    r"[^\S\n]*【\d+†[^】]{0,40}】(?:[^\S\n]*(?=[.,;:]))?"
+)
+
 
 class TextCleaner:
 
@@ -13,14 +21,16 @@ class TextCleaner:
 
         text = document.page_content
 
-        # Remove tabs
-        text = text.replace("\t", " ")
+        # Remove export reference markers (before whitespace is normalized)
+        text = _EXPORT_MARKER_PATTERN.sub("", text)
 
-        # Normalize multiple newlines
-        text = re.sub(r"\n+", "\n", text)
+        # Turn every kind of horizontal whitespace (tabs, non-breaking and thin
+        # spaces, carriage returns) into a single ordinary space
+        text = re.sub(r"[^\S\n]+", " ", text)
 
-        # Normalize multiple spaces
-        text = re.sub(r" +", " ", text)
+        # Drop spaces around line breaks, then normalize multiple newlines
+        text = re.sub(r" ?\n ?", "\n", text)
+        text = re.sub(r"\n{3,}", "\n\n", text)
 
         # Remove non-printable characters
         text = "".join(char for char in text if char.isprintable() or char == "\n")
@@ -43,4 +53,3 @@ class TextCleaner:
             TextCleaner.clean(document)
             for document in documents
         ]
-    

@@ -24,6 +24,45 @@ class ContextBuilder:
     ):
         self.token_counter = token_counter
         self.max_context_tokens = max_context_tokens
+    
+    @staticmethod
+    def _format_part(source_id: int, document: Document) -> str:
+        filename = document.metadata.get("filename", "unknown")
+        page = document.metadata.get("page", "unknown")
+        return (
+            f"[Source {source_id}]\n"
+            f"Document: {filename}\n"
+            f"Page: {page}\n\n"
+            f"{document.page_content}"
+        )
+
+    def select_for_overview(self, documents: list[Document]) -> list[Document]:
+        """Chunks to use for a whole-document question: all of them if they fit
+        the budget, otherwise a subset spread evenly across the document."""
+        if not documents:
+            return []
+
+        costs = [
+            self.token_counter(self._format_part(source_id, document))
+            for source_id, document in enumerate(documents, start=1)
+        ]
+        if sum(costs) <= self.max_context_tokens:
+            return list(documents)
+
+        count = len(documents)
+        keep = min(count - 1, int(self.max_context_tokens // (sum(costs) / count)))
+
+        while keep > 1:
+            indices = sorted({round(i * (count - 1) / (keep - 1)) for i in range(keep)})
+            if sum(costs[i] for i in indices) <= self.max_context_tokens:
+                logger.info(
+                    "Overview: document has %d chunks, using %d spread evenly across it",
+                    count, len(indices),
+                )
+                return [documents[i] for i in indices]
+            keep -= 1
+
+        return [documents[0]] if costs[0] <= self.max_context_tokens else []
 
     def build(self, documents: list[Document]) -> tuple[str, dict]:
 
@@ -34,16 +73,7 @@ class ContextBuilder:
 
         for source_id, document in enumerate(documents, start=1):
 
-            filename = document.metadata.get("filename", "unknown")
-            page = document.metadata.get("page", "unknown")
-
-            part = (
-                f"[Source {source_id}]\n"
-                f"Document: {filename}\n"
-                f"Page: {page}\n\n"
-                f"{document.page_content}"
-            )
-
+            part = self._format_part(source_id, document)
             part_tokens = self.token_counter(part)
 
             if used_tokens + part_tokens > self.max_context_tokens:
@@ -57,15 +87,13 @@ class ContextBuilder:
             context_parts.append(part)
             source_map[source_id] = {
                 "chunk_id": document.metadata.get("chunk_id"),
-                "filename": filename,
-                "page": page,
+                "filename": document.metadata.get("filename", "unknown"),
+                "page": document.metadata.get("page", "unknown"),
                 "start_char": document.metadata.get("start_char"),
                 "end_char": document.metadata.get("end_char"),
             }
-            
+
             used_tokens += part_tokens
             included += 1
 
-        context = "\n\n".join(context_parts)
-
-        return context, source_map
+        return "\n\n".join(context_parts), source_map

@@ -37,6 +37,20 @@ class FAISSVectorStore(BaseVectorStore):
         self.documents = []
         self._lock = threading.RLock()
 
+    def get_documents(self, metadata_filters: dict | None = None) -> list[Document]:
+        """Stored chunks in insertion order, optionally only those whose
+        metadata matches every key/value in metadata_filters."""
+        with self._lock:
+            documents = list(self.documents)
+
+        if not metadata_filters:
+            return documents
+
+        return [
+            document for document in documents
+            if all(document.metadata.get(key) == value for key, value in metadata_filters.items())
+        ]
+
     def add_documents(
         self,
         documents: list[Document],
