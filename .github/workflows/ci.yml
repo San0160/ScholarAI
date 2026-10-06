@@ -1,13 +1,9 @@
-name: CI and deploy
+name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-
-env:
-  # Must match the service name you created in Railway.
-  RAILWAY_SERVICE: scholarai
 
 jobs:
   check:
@@ -35,22 +31,6 @@ jobs:
       - name: Import the app
         run: python -c "from ai_research_assistant.api.app import app; print('Imported', app.title)"
 
-  deploy:
-    # Runs only after the checks pass, and only for pushes to the main branch
-    # (never for pull requests).
-    needs: check
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      # Uploads the repository to Railway, which builds the Dockerfile and
-      # deploys it. --ci streams the build log here and fails this job if the
-      # build fails.
-      - name: Deploy to Railway
-        run: railway up --service "$RAILWAY_SERVICE" --ci
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+# Deployment is handled by Railway itself: the repository is connected to the
+# Railway service, and with "Wait for CI" switched on Railway deploys only after
+# this workflow passes.
