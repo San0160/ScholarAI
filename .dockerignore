@@ -1,0 +1,25 @@
+# Secrets: keys are set as variables in Railway, never baked into the image
+.env
+.env.*
+
+# Version control and CI
+.git
+.github
+
+# Local Python environments and caches
+.venv
+venv
+env
+__pycache__
+**/__pycache__
+*.pyc
+**/*.egg-info
+.pytest_cache
+.mypy_cache
+.ipynb_checkpoints
+
+# Local runtime data: the app starts with an empty index
+logs/*
+data/raw/*
+data/vector_db/*
+data/processed/*

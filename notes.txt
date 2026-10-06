@@ -6,3 +6,15 @@ Nothing downstream uses section. So a heading like "1. Audit of Existing Project
 and never shown to the model.
 3) There is a second risk in the same place. Any short line that contains bold text and starts with a capital letter counts
 as a heading, so a short bold line of body text would be dropped too
+
+for resume
+**ScholarAI: Document Q&A with Page-Level Citations** | Python, FastAPI, FAISS, PyMuPDF, Groq, NVIDIA NIM
+
+- Built a retrieval-augmented generation (RAG) pipeline from scratch, without LangChain: custom document ingestion, token-aware chunking, FAISS retrieval and NVIDIA NIM reranking, served through FastAPI.
+- Added page-level citations checked against the retrieved sources, each linked to its page in an in-browser PDF viewer.
+- Made LLM, embedding and reranker providers swappable through config, with a token-budgeted full-document mode for summary questions.
+
+
+get evaluation (important)
+
+make use of params.yaml

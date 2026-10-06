@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Check every file compiles
+        run: python -m compileall -q src
+
+      # Imports the whole app on Linux without starting it, so no API keys are
+      # needed. Catches missing dependencies and file-name case mismatches that
+      # Windows hides.
+      - name: Import the app
+        run: python -c "from ai_research_assistant.api.app import app; print('Imported', app.title)"

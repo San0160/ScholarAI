@@ -218,6 +218,9 @@ __marimo__/
 .streamlit/secrets.toml
 
 
-# Vectordb
-data/vector_db/*.pkl
-data/vector_db/*.index
+data/raw/*
+data/vector_db/*
+data/processed/*
+artifacts/*
+logs/*
+!**/.gitkeep
