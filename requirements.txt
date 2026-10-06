@@ -26,5 +26,8 @@ huggingface_hub[hf_xet]
 openai
 requests
 
+# --- Reranker ---
+FlagEmbedding
+
 # --- Local package (editable install of ai_research_assistant) ---
 -e .

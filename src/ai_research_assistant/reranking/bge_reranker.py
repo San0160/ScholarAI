@@ -1,4 +1,4 @@
-from FlagEmbedding import FlagReranker
+#from FlagEmbedding import FlagReranker
 
 from ai_research_assistant.entity.retrieval_result import RetrievalResult
 from ai_research_assistant.reranking.base_reranker import BaseReranker
