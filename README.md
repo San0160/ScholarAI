@@ -8,11 +8,8 @@
 
 ScholarAI is a retrieval-augmented generation (RAG) system built from scratch, without LangChain or any other orchestration framework. Every stage (loading, cleaning, chunking, embedding, retrieval, reranking, prompt assembly and citation checking) is plain Python that you can read, test and replace.
 
-**Live demo:** <!-- TODO: replace with your Railway link --> https://YOUR-APP.up.railway.app
+**Live demo:** https://scholarai-production-68e0.up.railway.app
 
-**Video walkthrough:** <!-- TODO: replace with your LinkedIn post link --> [Watch the demo on LinkedIn](https://www.linkedin.com/posts/YOUR-POST)
-
-<!-- TODO: save a screenshot of the app as docs/screenshot.png. Clicking it opens the video. -->
 [![ScholarAI screenshot](docs/screenshot.png)](https://www.linkedin.com/posts/YOUR-POST)
 
 ## What it does
