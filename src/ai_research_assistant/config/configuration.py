@@ -49,3 +49,19 @@ class ConfigurationManager:
             api_base_url=reranking.get("api_base_url"),
             api_key_env_var=reranking.get("api_key_env_var"),
         )
+
+    def get_judge_config(self) -> LLMConfig:
+        """Settings for the LLM that grades answers during evaluation."""
+        evaluation = self.config.get("evaluation")
+        judge = evaluation.get("judge") if evaluation else None
+        if not judge:
+            raise ValueError("Add an 'evaluation: judge:' section to config/config.yaml")
+        return LLMConfig(
+            provider=judge.get("provider", "api"),
+            model=judge.model,
+            device="auto",
+            max_context_tokens=judge.get("max_context_tokens", 16000),
+            max_new_tokens=judge.get("max_new_tokens", 400),
+            api_base_url=judge.get("api_base_url"),
+            api_key_env_var=judge.get("api_key_env_var"),
+        )

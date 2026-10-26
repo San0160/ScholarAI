@@ -21,7 +21,7 @@ class DocumentRetrievalEvaluator:
             query = question["question"]
             expected_source = question["expected_source"]
 
-            results = self.pipeline.run(query)
+            results = self.pipeline.run(query, top_k=self.k)
             results = results[: self.k]
 
             retrieved_sources = [

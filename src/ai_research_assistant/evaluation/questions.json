@@ -1,12 +1,12 @@
 [
-  {"document": "GAN_case_study.pdf", "question": "What is the main objective of the assignment?", "expected_chunks": ["GAN_case_study.pdf_0"]},
-  {"document": "GAN_case_study.pdf", "question": "What are the three real-world domains addressed using GANs?", "expected_chunks": ["GAN_case_study.pdf_0"]},
-  {"document": "GAN_case_study.pdf", "question": "What changes were made to improve the GAN training process?", "expected_chunks": ["GAN_case_study.pdf_3"]},
-  {"document": "GAN_case_study.pdf", "question": "Which activation function was used instead of ReLU?", "expected_chunks": ["GAN_case_study.pdf_3"]},
-  {"document": "GAN_case_study.pdf", "question": "What happened when the model was trained on the 2-D spiral data?", "expected_chunks": ["GAN_case_study.pdf_2", "GAN_case_study.pdf_3"]},
-  {"document": "GAN_case_study.pdf", "question": "What problem was observed in the generated blood cell images?", "expected_chunks": ["GAN_case_study.pdf_5"]},
-  {"document": "GAN_case_study.pdf", "question": "What was the FID score reported for the blood cell generation?", "expected_chunks": ["GAN_case_study.pdf_5"]},
-  {"document": "GAN_case_study.pdf", "question": "What was observed during the pizza sketch generation task?", "expected_chunks": ["GAN_case_study.pdf_8"]},
-  {"document": "GAN_case_study.pdf", "question": "What improvement was suggested for the GAN discriminator?", "expected_chunks": ["GAN_case_study.pdf_5", "GAN_case_study.pdf_7", "GAN_case_study.pdf_9"]},
-  {"document": "GAN_case_study.pdf", "question": "What GAN paper is cited in the references?", "expected_chunks": ["GAN_case_study.pdf_10"]}
+  {"document": "GAN_case_study.pdf", "question": "What is the main objective of the assignment?", "expected_pages": [1], "must_include": [["gan*", "generative adversarial*"]]},
+  {"document": "GAN_case_study.pdf", "question": "What are the three real-world domains addressed using GANs?", "expected_pages": [1], "must_include": [["medicine", "blood*", "medical"], ["cybersecurity", "cyber*"], ["creative*", "pizza", "sketch*"]]},
+  {"document": "GAN_case_study.pdf", "question": "What changes were made to improve the GAN training process?", "expected_pages": [2], "must_include": [["normali*"], ["leakyrelu", "leaky relu", "leaky"], ["bcewithlogits*", "loss"]]},
+  {"document": "GAN_case_study.pdf", "question": "Which activation function was used instead of ReLU?", "expected_pages": [2], "must_include": [["leakyrelu", "leaky relu", "leaky"]]},
+  {"document": "GAN_case_study.pdf", "question": "What happened when the model was trained on the 2-D spiral data?", "expected_pages": [1, 2], "must_include": [["mode collapse"], ["improv*", "tun*", "adjust*"]]},
+  {"document": "GAN_case_study.pdf", "question": "What problem was observed in the generated blood cell images?", "expected_pages": [3], "must_include": [["blur*"], ["mode collapse", "repeat*"]]},
+  {"document": "GAN_case_study.pdf", "question": "What was the FID score reported for the blood cell generation?", "expected_pages": [3], "must_include": [["54.52"]]},
+  {"document": "GAN_case_study.pdf", "question": "What was observed during the pizza sketch generation task?", "expected_pages": [5], "must_include": [["circular", "slice*", "topping*", "pizza*"], ["blur*", "distort*", "stable", "no mode collapse"]]},
+  {"document": "GAN_case_study.pdf", "question": "What improvement was suggested for the GAN discriminator?", "expected_pages": [3, 4, 6], "must_include": [["weak*", "weaken*", "balanc*"]]},
+  {"document": "GAN_case_study.pdf", "question": "What GAN paper is cited in the references?", "expected_pages": [6], "must_include": [["goodfellow"]]}
 ]
