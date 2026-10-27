@@ -8,7 +8,7 @@ _DASHES = re.compile("[‐-―−]")
 
 # [Source 3], (Source 3), and the document's own reference markers like [20] or [3, 4].
 _MARKERS = re.compile(
-    r"\[\s*source[^\]]*\]|\(\s*source[^)]*\)|\[\s*\d+(?:\s*[,;–-]\s*\d+)*\s*\]",
+    r"[\[【]\s*source[^\]】]*[\]】]|\(\s*source[^)]*\)|\[\s*\d+(?:\s*[,;–-]\s*\d+)*\s*\]",
     re.IGNORECASE,
 )
 

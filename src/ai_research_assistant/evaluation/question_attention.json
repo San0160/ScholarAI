@@ -90,7 +90,8 @@
       ],
       [
         "square root",
-        "sqrt"
+        "sqrt",
+        "√"
       ]
     ]
   },
@@ -271,8 +272,7 @@
         "recurrence"
       ],
       [
-        "multi-head*",
-        "multi head*"
+        "attention"
       ]
     ]
   }

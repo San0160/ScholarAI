@@ -42,8 +42,7 @@ from ai_research_assistant.config.configuration import ConfigurationManager
 from ai_research_assistant.embeddings.embedding_factory import EmbeddingFactory
 from ai_research_assistant.evaluation.answer_checks import average, citation_check, fact_check
 from ai_research_assistant.evaluation.eval_indexes import build_index
-from ai_research_assistant.evaluation.llm_judge import LLMJudge
-from ai_research_assistant.llm.api_llm import APILLM
+from ai_research_assistant.evaluation.judge_setup import ascii_text, make_judge, with_retries
 from ai_research_assistant.pipeline.answer_service import answer_question
 from ai_research_assistant.pipeline.generation_pipeline import GenerationPipeline
 
@@ -65,32 +64,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def ascii_text(text) -> str:
-    """Console-safe text, so a stray symbol cannot crash printing on Windows."""
-    return str(text).encode("ascii", "replace").decode("ascii")
-
-
-def is_rate_limit(error: BaseException) -> bool:
-    while error is not None:
-        message = str(error).lower()
-        if "ratelimit" in type(error).__name__.lower() or "429" in message or "rate limit" in message:
-            return True
-        error = error.__cause__ or error.__context__
-    return False
-
-
-def with_retries(call, label: str, attempts: int = 4, wait: float = 45.0):
-    """Run call(); if the provider says "slow down", wait and try again."""
-    for attempt in range(1, attempts + 1):
-        try:
-            return call()
-        except Exception as error:
-            if not is_rate_limit(error) or attempt == attempts:
-                raise
-            print(f"    {label}: rate limited, waiting {wait:.0f}s (retry {attempt} of {attempts - 1})")
-            time.sleep(wait)
-
-
 def load_items(paths: list[str]) -> list[dict]:
     """Questions that have a document and at least one thing to check."""
     items = []
@@ -101,32 +74,6 @@ def load_items(paths: list[str]) -> list[dict]:
                 if item.get("document") and has_label:
                     items.append({**item, "_set": Path(path).name})
     return items
-
-
-def make_judge(config_manager) -> LLMJudge:
-    """Build the judge and test it with one tiny call, so a wrong model name or
-    key fails now instead of after twenty minutes."""
-    judge_config = config_manager.get_judge_config()
-    llm = APILLM(
-        model=judge_config.model,
-        base_url=judge_config.api_base_url,
-        api_key_env_var=judge_config.api_key_env_var,
-        max_new_tokens=judge_config.max_new_tokens,
-    )
-    try:
-        llm.generate([{"role": "user", "content": "Reply with the single word OK."}])
-    except Exception as error:
-        print(f"\nThe judge model '{judge_config.model}' did not respond: {ascii_text(error.__cause__ or error)}")
-        try:
-            names = sorted(model.id for model in llm.client.models.list())
-            likely = [name for name in names if any(tag in name.lower() for tag in ("instruct", "chat", "nemotron", "mistral", "llama"))]
-            print("Chat models your key can list (pick one and set evaluation.judge.model in config.yaml):")
-            for name in likely[:40]:
-                print(f"  {name}")
-        except Exception:
-            print("Could not list models either. Check NVIDIA_API_KEY in .env and the model name in config.yaml.")
-        raise SystemExit(2)
-    return LLMJudge(llm)
 
 
 def evaluate_one(item, retrieval, generation, judge, judge_pause) -> dict:

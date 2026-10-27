@@ -16,6 +16,10 @@ def test_strip_markers_removes_source_and_reference_markers():
     assert "6 layers" in cleaned
 
 
+def test_strip_markers_handles_full_width_brackets():
+    assert "Source" not in strip_markers("There are six layers【Source 6】.")
+
+
 def test_normalize_folds_ligatures_dashes_and_case():
     assert normalize("Multi–Head  \n Attention ﬁnal") == "multi-head attention final"
 

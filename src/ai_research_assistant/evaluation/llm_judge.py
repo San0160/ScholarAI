@@ -97,7 +97,9 @@ def _score(value):
 
 def parse_judge_reply(reply: str, expect_correctness: bool) -> dict | None:
     """Pull the JSON object out of a judge reply. None if it can't be used."""
-    match = re.search(r"\{.*\}", reply or "", re.DOTALL)
+    # Some models write their reasoning in <think> tags first; it can contain braces.
+    reply = re.sub(r"<think>.*?(</think>|$)", "", reply or "", flags=re.DOTALL | re.IGNORECASE)
+    match = re.search(r"\{.*\}", reply, re.DOTALL)
     if not match:
         return None
     try:

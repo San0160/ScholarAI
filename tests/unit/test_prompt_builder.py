@@ -1,29 +1,21 @@
 from ai_research_assistant.generation.prompt_builder import PromptBuilder
 
 
-builder = PromptBuilder()
+def test_build_returns_system_then_user_message():
+    messages = PromptBuilder().build(query="Which optimizer was used?", context="[Source 1]\nAdam was used.")
 
-query = (
-    "What optimization algorithm and learning-rate schedule "
-    "were used to train the Transformer?"
-)
+    assert [message["role"] for message in messages] == ["system", "user"]
+    assert messages[0]["content"] == PromptBuilder.SYSTEM_PROMPT
 
-context = """
-The big models were trained for 300,000 steps.
-We used the Adam optimizer with β1 = 0.9,
-β2 = 0.98 and ε = 10−9.
-We varied the learning rate over the course of training.
-This corresponds to increasing the learning rate linearly
-for the first warmup steps and decreasing it thereafter
-proportionally to the inverse square root of the step number.
-"""
 
-prompt = builder.build(
-    query=query,
-    context=context
-)
+def test_user_message_contains_the_context_and_the_question():
+    messages = PromptBuilder().build(query="Which optimizer was used?", context="[Source 1]\nAdam was used.")
+    user_message = messages[1]["content"]
 
-print("=" * 80)
-print("GENERATED PROMPT")
-print("=" * 80)
-print(prompt)
+    assert "Adam was used." in user_message
+    assert "Which optimizer was used?" in user_message
+    assert user_message.index("Adam was used.") < user_message.index("Which optimizer was used?")
+
+
+def test_system_prompt_tells_the_model_how_to_cite():
+    assert "[Source N]" in PromptBuilder.SYSTEM_PROMPT
