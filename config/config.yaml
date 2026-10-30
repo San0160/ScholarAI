@@ -48,14 +48,12 @@ llm:
   max_new_tokens: 1024
 
 reranking:
-  provider: api  # "api" (NVIDIA NIM hosted) | "cross_encoder" | "bge" -- model field's meaning depends on this
+  provider: api  # "api" (NVIDIA NIM hosted) | "cross_encoder" | "bge"
   model: nvidia/llama-nemotron-rerank-vl-1b-v2
   top_k: 8
   api_base_url: https://ai.api.nvidia.com/v1/retrieval/nvidia/llama-nemotron-rerank-vl-1b-v2/reranking
   api_key_env_var: RERANKER_API_KEY
 
-# Used only by scripts/evaluate_answers.py. The judge should come from a different
-# model family than llm.model above, because a model grades its own writing too kindly.
 evaluation:
   judge:
     provider: api
