@@ -77,7 +77,8 @@ src/ai_research_assistant/
 ├── generation/     Context builder and prompt builder
 ├── llm/            LLM backends and factory
 ├── citation/       Citation validation and answer formatting
-├── pipeline/       Indexing, retrieval and generation pipelines
+├── pipeline/       Indexing, retrieval and generation pipelines, and answer_service, the one function the API and the evaluation both call
+├── evaluation/     Retrieval and answer evaluators, key-fact and citation checks, LLM judge
 ├── config/         Typed configuration loaded from config/config.yaml
 ├── entity/         Dataclasses: Document, RetrievalResult, config entities
 ├── utils/          Token counting and citation helpers
@@ -85,11 +86,15 @@ src/ai_research_assistant/
 └── exception/      Internal exception with file and line capture
 ```
 
+Outside `src/`: `scripts/` holds the evaluation commands, `tests/unit/` the offline unit tests, and `config/config.yaml` every setting.
+
 ### Design choices
 
 - **No framework.** The goal was to understand and control each step of RAG instead of configuring someone else's abstraction.
 - **Two-stage retrieval.** A fast vector search gathers a wide set of candidates, then a reranker picks the few that are passed to the LLM.
 - **Citations are checked, not trusted.** The LLM is asked to cite the numbered sources it was given. Any source number it invents is detected and never shown.
+- **Measured, not assumed.** Retrieval and answers are scored against labelled questions, so a change such as a new chunk size or a different reranker is judged on numbers. See [Evaluation](#evaluation).
+- **One answering path.** The API and the evaluation scripts call the same `answer_question` function, so the evaluation tests exactly what users get.
 - **Swappable providers.** The LLM, embedding model and reranker are each chosen in `config/config.yaml`. Adding a provider means writing one class and registering it in a factory.
 - **Token budgets.** The context is sized to stay inside the LLM provider's rate limit, which matters on free tiers.
 - **Fresh start.** The index and uploads are cleared every time the server starts, so each run begins empty.
@@ -101,9 +106,10 @@ src/ai_research_assistant/
 | API and UI | FastAPI, vanilla HTML/CSS/JS, PDF.js |
 | Parsing | PyMuPDF, python-docx |
 | Vector search | FAISS (inner product on normalised vectors) |
-| Embeddings | Hugging Face model, set in `config.yaml` |
+| Embeddings | `nvidia/llama-nemotron-embed-vl-1b-v2` through NVIDIA NIM (a local Hugging Face model also works) |
 | Reranker | `nvidia/llama-nemotron-rerank-vl-1b-v2` through NVIDIA NIM |
 | LLM | `openai/gpt-oss-120b` through Groq's OpenAI-compatible API |
+| Evaluation judge | `qwen/qwen3.8-27b` through Groq, a different model family from the answer LLM |
 | Deployment | Docker, Railway, GitHub Actions for CI |
 
 ## Getting started
@@ -112,7 +118,7 @@ src/ai_research_assistant/
 
 - Python 3.10 or newer
 - A [Groq](https://console.groq.com) API key for the LLM
-- An [NVIDIA NIM](https://build.nvidia.com) API key for the reranker
+- An [NVIDIA NIM](https://build.nvidia.com) API key for the embedding model and the reranker
 
 ### Install
 
@@ -136,8 +142,11 @@ Create a file named `.env` in the project root. It is ignored by git.
 
 ```
 GROQ_API_KEY=your_groq_key
+NVIDIA_API_KEY=your_nvidia_key
 RERANKER_API_KEY=your_nvidia_key
 ```
+
+The embedding model reads `NVIDIA_API_KEY` and the reranker reads `RERANKER_API_KEY`. Both are NVIDIA keys; the names are separate so each can be changed on its own.
 
 ### Run
 
@@ -198,8 +207,61 @@ Everything tunable lives in `config/config.yaml`.
 | `retrieval` | `candidate_k`, how many chunks the vector search returns |
 | `reranking` | Provider, model and `top_k`, how many chunks reach the LLM |
 | `vector_store` | Where the FAISS index is stored |
+| `evaluation` | The judge model used by `scripts/evaluate_answers.py` |
 
 To switch a provider, change `provider` and `model` in the relevant section. No code changes are needed for providers that already exist.
+
+## Evaluation
+
+Quality is measured on five PDFs in `data/documents` (the Attention paper, a GAN case study, and three others) with hand-labelled questions: 30 for retrieval and 26 for answers. Each question names the page that holds its answer, and answer questions also list the key facts a correct answer must contain.
+
+```bash
+python scripts/evaluate_retrieval.py   # retrieval with and without the reranker
+python scripts/evaluate_answers.py     # citations, key facts and an LLM judge
+python scripts/check_judge.py          # checks the judge can tell good answers from bad ones
+pytest                                 # offline unit tests
+```
+
+Every run writes a JSON report to `artifacts/eval/` with the settings it ran with (commit, models, chunk size), so runs can be compared fairly. The evaluation builds its own small indexes under `artifacts/eval_index/` and never touches the app's index.
+
+### Retrieval
+
+A question counts as a hit when one of the top 3 results comes from the labelled page. MRR rewards putting that page first (1.0 is perfect).
+
+| Question set | Hits without reranker | Hits with reranker | MRR without | MRR with |
+| --- | --- | --- | --- | --- |
+| Attention paper (16 questions) | 14 / 16 | 16 / 16 | 0.77 | 0.93 |
+| GAN case study (10 questions) | 10 / 10 | 10 / 10 | 0.90 | 0.95 |
+| Four papers, right file (4 questions) | 4 / 4 | 4 / 4 | 1.00 | 1.00 |
+
+The reranker matters on the harder Attention paper set: two more questions found their page and MRR rose from 0.77 to 0.93, for about 280 ms extra per question. The other two sets are easy enough that vector search alone already finds the page.
+
+### Answers
+
+Each question goes through the same code the app uses, then the answer is checked four ways: the cited page against the labelled page, the key facts, and two scores from an LLM judge (faithfulness to the excerpts and correctness against a reference answer, each out of 5).
+
+| Check | Result |
+| --- | --- |
+| Right page reached the prompt | 100% |
+| Model cited a source on its own | 96% (25 of 26) |
+| A cited page holds the answer | 96% (25 of 26) |
+| Key facts found | 96% |
+| Faithfulness (judge, out of 5) | 4.92 |
+| Correctness (judge, out of 5; 16 questions with a reference answer) | 5.00 |
+| Citation precision (cited pages that are labelled pages) | 78% |
+| Mean time per answer | 3.5 s |
+
+Citation precision looks low because answers often cite an extra page that is also relevant while only one or two pages are labelled, so "a cited page holds the answer" is the fairer figure.
+
+### What it found
+
+The first full run caught a real bug: on one question the model wrote its citation with full-width brackets, which the citation checker did not recognise, so the marker stayed in the answer text and the citation list fell back to every source. Both bracket styles are now handled and covered by tests. The same run showed two key-fact labels that were stricter than the question, which were corrected.
+
+### How far to trust these numbers
+
+- The question sets are small, hand-labelled by the project author, and each result comes from a single run.
+- The judge is a 27B preview model from a different family than the answer LLM. Its scores are a guide, and `check_judge.py` tests that it separates good answers from bad ones.
+- The page and key-fact checks need no LLM and are the firmest numbers here.
 
 ## Limitations
 
@@ -212,8 +274,9 @@ To switch a provider, change `provider` and `model` in the relevant section. No 
 
 ## Roadmap
 
-- An evaluation suite: retrieval hit rate with and without the reranker, citation accuracy and answer faithfulness
-- Unit tests for the chunker, text cleaner, citation utilities and context builder
+- Larger evaluation sets, including questions the document cannot answer, to check that it says so
+- Unit tests for the chunker, text cleaner and PDF loader (citations, context and prompts are covered)
+- Run the unit tests in the CI workflow
 - Keep section headings in the indexed text
 - Chat history and follow-up questions
 - Page-range questions ("summarise pages 1 to 2")
@@ -227,10 +290,11 @@ Contributions are welcome, from bug reports to new providers.
 1. Fork the repository and create a branch: `git checkout -b feature/short-description`.
 2. Set up the project as described in [Getting started](#getting-started).
 3. Make your change. Keep it focused on one thing.
-4. Run the same checks CI runs:
+4. Run the checks CI runs, plus the unit tests:
    ```bash
    python -m compileall -q src
    python -c "from ai_research_assistant.api.app import app"
+   pytest
    ```
 5. Start the app and try an upload and a question to confirm nothing broke.
 6. Open a pull request that says what changed and why. CI must pass before it can be merged.

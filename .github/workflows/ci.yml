@@ -31,6 +31,12 @@ jobs:
       - name: Import the app
         run: python -c "from ai_research_assistant.api.app import app; print('Imported', app.title)"
 
+      # Offline unit tests (see pytest.ini): no API keys or network needed.
+      - name: Run the unit tests
+        run: |
+          pip install pytest
+          pytest
+
 # Deployment is handled by Railway itself: the repository is connected to the
 # Railway service, and with "Wait for CI" switched on Railway deploys only after
 # this workflow passes.
